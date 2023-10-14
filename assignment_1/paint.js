@@ -3,11 +3,14 @@
 var gl;
 var points;
 var canvas;
+var undoButton;
+var redoButton;
 var program;
 var buffer;
 var triangle;
 var square;
 var square_size = 20;
+var sqTri;
 var pointX;
 var pointY;
 let vertex_arrays = {};
@@ -18,7 +21,7 @@ var maxNumTriangles = 3600;
 var maxNumVertices  = 3 * maxNumTriangles;
 
 var undoStack = [], redoStack = [];
-var maxStackSize = 30;
+var maxStackSize = 32;
 var changeBuffer = [];
 
 var colors = [
@@ -34,6 +37,8 @@ var colors = [
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
+    undoButton = document.getElementById("undo");
+    redoButton = document.getElementById("redo");
 
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) { alert("WebGL isn't available"); }
@@ -41,6 +46,52 @@ window.onload = function init() {
     //console.log("Canvas: (%s, %s)", canvas.width, canvas.height);
 
     color_menu = document.getElementById("color-menu");
+
+    undoButton.addEventListener("click", function () {
+        if (!undoStack.length) return;
+        var lastStroke = undoStack.pop();
+        var t = lastStroke.pop();
+
+        lastStroke.forEach(e => {
+            // 1000 * square.column + 10 * square.row + triangle
+            var tri = e % 10;
+            var row = Math.floor((e % 1000) / 10);
+            var column = Math.floor(e / 1000);
+
+            // delete triangle
+        });
+
+        lastStroke.push(t);
+        redoStack.push(lastStroke);
+
+        if (redoStack.length > maxStackSize) {
+            redoStack.shift();
+        } 
+        console.log(undoStack, redoStack);
+    });
+
+    redoButton.addEventListener("click", function () {
+        if (!redoStack.length) return;
+        var nextStroke = redoStack.pop();
+        var color = nextStroke.pop();
+
+        nextStroke.forEach(e => {
+            // 1000 * square.column + 10 * square.row + triangle
+            var tri = e % 10;
+            var row = Math.floor((e % 1000) / 10);
+            var column = Math.floor(e / 1000);
+
+            // draw triangle
+        });
+
+        nextStroke.push(color);
+        undoStack.push(nextStroke);
+
+        if (undoStack.length > maxStackSize) {
+            undoStack.shift();
+        } 
+        console.log(undoStack, redoStack);
+    });
 
     canvas.addEventListener("mousedown", function () {
         //console.log("mouse down");
@@ -63,48 +114,49 @@ window.onload = function init() {
             square = findSquareLocation(pointX, pointY);
             triangle = findTriangleLocation(pointX, pointY, square.column, square.row);
 
-            var sqTri = 1000 * square.column + 10 * square.row + triangle;
-            if (!changeBuffer.includes(sqTri))
-                changeBuffer.push(sqTri);
-
             var square_center = {
                 "x": ((square.column - 1) * square_size) + (square_size/2),
                 "y": ((square.row - 1) * square_size) + (square_size/2)
             };
-
+    
             var coordinates = getTriangleCoordinates(triangle);
-
+    
             p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
             p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
             p3 = convertLocation(square_center.x, square_center.y);
-
+    
             vertex_arrays = [
                 p1.x, p1.y,
                 p2.x, p2.y,
                 p3.x, p3.y
             ];
-
+    
             //console.log(vertex_arrays);
             gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
             gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
-
+    
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-            var color = vec4(colors[color_menu.selectedIndex]);
             for( var i = 0; i < 3; i++) {
-                gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
+                gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(vec4(colors[color_menu.selectedIndex])));
                 color_index++;
-            }            
+            }
 
             index = (index + 3) % maxNumTriangles;
-            //console.log(index);
+
+            sqTri = 1000 * square.column + 10 * square.row + triangle;
+            if (!changeBuffer.includes(sqTri))
+                changeBuffer.push(sqTri);
         }
         else {
             if (changeBuffer.length) {
-                undoStack.push([...changeBuffer]);
+                undoStack.push([...changeBuffer, color_menu.selectedIndex]);
+                redoStack = [];
                 changeBuffer = [];
-                console.log(undoStack);
+
+                if (undoStack.length > maxStackSize) {
+                    undoStack.shift();
+                }
             }
-                
         }
     });
 
