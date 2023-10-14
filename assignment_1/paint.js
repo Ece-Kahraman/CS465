@@ -64,8 +64,8 @@ window.onload = function init() {
             ];
 
             console.log(vertex_arrays);     
-            gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
-            index++;
+            gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
+            index += 3;
             console.log(index);
         }
     });
@@ -95,7 +95,6 @@ window.onload = function init() {
     var vPosition = gl.getAttribLocation(program, "vPosition");
     gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-
 
 
     render();
@@ -188,4 +187,3 @@ function convertLocation(x, y) {
     };
 
 }
-
