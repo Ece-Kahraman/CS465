@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>CS465 Assignment 1</title>
 
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec4 vPosition;
@@ -20,7 +21,7 @@ precision mediump float;
 varying vec4 fColor;
 
 void main() {
-    gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+    gl_FragColor = fColor;
 }
 </script>
 
@@ -31,8 +32,27 @@ void main() {
 </head>
 
 <body>
-<canvas id="gl-canvas" width="600" height="600">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
+    <div style="display: flex;">
+        <canvas id="gl-canvas" width="600" height="600" style="border: 2px solid black;">
+        Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    
+        <!-- Application Configuration Tools -->
+        <div style="padding-left: 60px;">
+            <h2 style="font-family:verdana;">Configuration Tools</h1>
+            <label for="color-menu">Select a color:</label>
+            <select id="color-menu">
+                <option value="0">Black</option>
+                <option value="1">Red</option>
+                <option value="2">Yellow</option>
+                <option value="3">Green</option>
+                <option value="4">Blue</option>
+                <option value="5">Magenta</option>
+                <option value="6">Cyan</option>
+            </select>
+            <br/><br/>
+    
+        </div>
+    </div>
 </body>
 </html>

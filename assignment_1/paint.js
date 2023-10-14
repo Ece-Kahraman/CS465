@@ -1,3 +1,5 @@
+
+
 var gl;
 var points;
 var canvas;
@@ -11,8 +13,19 @@ var pointY;
 let vertex_arrays = {};
 var mouseClicked = false;
 var index = 0;
+var color_index = 0;
 var maxNumTriangles = 3600;
 var maxNumVertices  = 3 * maxNumTriangles;
+
+var colors = [
+    vec4( 0.0, 0.0, 0.0, 1.0 ),  // black
+    vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
+    vec4( 1.0, 1.0, 0.0, 1.0 ),  // yellow
+    vec4( 0.0, 1.0, 0.0, 1.0 ),  // green
+    vec4( 0.0, 0.0, 1.0, 1.0 ),  // blue
+    vec4( 1.0, 0.0, 1.0, 1.0 ),  // magenta
+    vec4( 0.0, 1.0, 1.0, 1.0 )   // cyan
+];
 
 
 window.onload = function init() {
@@ -22,6 +35,8 @@ window.onload = function init() {
     if (!gl) { alert("WebGL isn't available"); }
 
     console.log("Canvas: (%s, %s)", canvas.width, canvas.height);
+
+    color_menu = document.getElementById("color-menu");
 
     canvas.addEventListener("mousedown", function () {
         console.log("mouse down");
@@ -37,7 +52,6 @@ window.onload = function init() {
         console.log("Mouse: (%s, %s)", event.clientX, event.clientY);
 
         if (mouseClicked) {
-            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
 
             pointX = event.clientX - 8;
             pointY = event.clientY - 8;
@@ -62,9 +76,16 @@ window.onload = function init() {
                 p3.x, p3.y
             ];
 
-            console.log(vertex_arrays);     
+            console.log(vertex_arrays);
+            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
             gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            var color = vec4(colors[color_menu.selectedIndex]);
+            gl.bufferSubData(gl.ARRAY_BUFFER, 16*index, flatten(color));
+
             index += 3;
+            color_index++;
             console.log(index);
         }
     });
@@ -73,7 +94,7 @@ window.onload = function init() {
     //  Configure WebGL
     //
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
 
     //  Load shaders and initialize attribute buffers
 
@@ -87,13 +108,19 @@ window.onload = function init() {
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, 8*maxNumVertices, gl.DYNAMIC_DRAW);
 
-
-
-    // Associate out shader variables with our data buffer
-
     var vPosition = gl.getAttribLocation(program, "vPosition");
     gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
+
+    // Associate out shader variables with our data buffer
+
+    var cBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, 16*maxNumVertices, gl.STATIC_DRAW );
+
+    var vColor = gl.getAttribLocation( program, "vColor" );
+    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
 
 
     render();
@@ -104,10 +131,8 @@ function render() {
     console.log("render");
     // Clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT);
-    // vPosition = gl.getAttribLocation(program, "vPosition");
-    // gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(vPosition);
     gl.drawArrays(gl.TRIANGLES, 0, index);
+    //gl.drawElements(gl.TRIANGLES, index, gl.UNSIGNED_SHORT, 0);
     requestAnimFrame(render);
 }
 
@@ -186,3 +211,4 @@ function convertLocation(x, y) {
     };
 
 }
+
