@@ -82,12 +82,12 @@ window.onload = function init() {
 
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
             var color = vec4(colors[color_menu.selectedIndex]);
-            for( var i = 0; i < 3; i++){
+            for( var i = 0; i < 3; i++) {
                 gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
                 color_index++;
             }            
 
-            index += 3;
+            index = (index + 3) % maxNumTriangles;
             console.log(index);
         }
     });
@@ -103,7 +103,6 @@ window.onload = function init() {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-
     // Load the data into the GPU
 
     var vBuffer = gl.createBuffer();
@@ -118,7 +117,7 @@ window.onload = function init() {
 
     var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, 16*maxNumVertices, gl.STATIC_DRAW );
+    gl.bufferData( gl.ARRAY_BUFFER, 16*maxNumVertices, gl.DYNAMIC_DRAW );
 
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
