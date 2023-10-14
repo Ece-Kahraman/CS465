@@ -17,6 +17,10 @@ var color_index = 0;
 var maxNumTriangles = 3600;
 var maxNumVertices  = 3 * maxNumTriangles;
 
+var undoStack = [], redoStack = [];
+var maxStackSize = 30;
+var changeBuffer = [];
+
 var colors = [
     vec4( 0.0, 0.0, 0.0, 1.0 ),  // black
     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
@@ -34,22 +38,22 @@ window.onload = function init() {
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) { alert("WebGL isn't available"); }
 
-    console.log("Canvas: (%s, %s)", canvas.width, canvas.height);
+    //console.log("Canvas: (%s, %s)", canvas.width, canvas.height);
 
     color_menu = document.getElementById("color-menu");
 
     canvas.addEventListener("mousedown", function () {
-        console.log("mouse down");
+        //console.log("mouse down");
         mouseClicked = true;
     });
 
     canvas.addEventListener("mouseup", function () {
-        console.log("mouse up");
+        //console.log("mouse up");
         mouseClicked = false;
     });
 
     canvas.addEventListener("mousemove", function (event) {
-        console.log("Mouse: (%s, %s)", event.clientX, event.clientY);
+        //console.log("Mouse: (%s, %s)", event.clientX, event.clientY);
 
         if (mouseClicked) {
 
@@ -58,6 +62,10 @@ window.onload = function init() {
 
             square = findSquareLocation(pointX, pointY);
             triangle = findTriangleLocation(pointX, pointY, square.column, square.row);
+
+            var sqTri = 1000 * square.column + 10 * square.row + triangle;
+            if (!changeBuffer.includes(sqTri))
+                changeBuffer.push(sqTri);
 
             var square_center = {
                 "x": ((square.column - 1) * square_size) + (square_size/2),
@@ -76,7 +84,7 @@ window.onload = function init() {
                 p3.x, p3.y
             ];
 
-            console.log(vertex_arrays);
+            //console.log(vertex_arrays);
             gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
             gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
 
@@ -88,7 +96,15 @@ window.onload = function init() {
             }            
 
             index = (index + 3) % maxNumTriangles;
-            console.log(index);
+            //console.log(index);
+        }
+        else {
+            if (changeBuffer.length) {
+                undoStack.push([...changeBuffer]);
+                changeBuffer = [];
+                console.log(undoStack);
+            }
+                
         }
     });
 
@@ -129,7 +145,7 @@ window.onload = function init() {
 
 
 function render() {
-    console.log("render");
+    //console.log("render");
     // Clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, index);
@@ -151,20 +167,18 @@ function findSquareLocation(x, y) {
 
 function findTriangleLocation(x, y, sq_col, sq_row) {
 
-    var result = "";
-
     // "relative" means that treat each square 
     // like it is the main 20*20 HTML square
 
     var relativeX = x - ((sq_col - 1) * square_size);
     var relativeY = y - ((sq_row - 1) * square_size);
 
-    if (relativeX < relativeY && (relativeX + relativeY) < square_size) { result = "L"; }
-    else if (relativeX < relativeY && (relativeX + relativeY) >= square_size) { result = "D"; }
-    else if (relativeX >= relativeY && (relativeX + relativeY) < square_size) { result = "U"; }
-    else if (relativeX >= relativeY && (relativeX + relativeY) >= square_size) { result = "R"; }
+    if (relativeX < relativeY && (relativeX + relativeY) < square_size) { return 0; }
+    else if (relativeX < relativeY && (relativeX + relativeY) >= square_size) { return 1; }
+    else if (relativeX >= relativeY && (relativeX + relativeY) < square_size) { return 2; }
+    else if (relativeX >= relativeY && (relativeX + relativeY) >= square_size) { return 3; }
 
-    return result;
+    return 0; // just in case
 
 }
 
@@ -176,23 +190,23 @@ function getTriangleCoordinates(triangle_direction){
         // #3: bottom-left corner
         // #4: bottom-right corner
 
-        case "L":                    
+        case 0:                    
             vertex1 = { "x": (square.column - 1) * square_size, "y": (square.row - 1) * square_size }; // #1                    
             vertex2 = { "x": (square.column - 1) * square_size, "y": square.row * square_size }; // #3
             break;
 
-        case "U":
+        case 1:                    
+            vertex1 = { "x": (square.column - 1) * square_size, "y": square.row * square_size }; // #3
+            vertex2 = { "x": square.column * square_size, "y": square.row * square_size }; // #4
+            break;
+
+        case 2:
             vertex1 = { "x": (square.column - 1) * square_size, "y": (square.row - 1) * square_size }; // #1
             vertex2 = { "x": square.column * square_size, "y": (square.row - 1) * square_size }; // #2
             break;
 
-        case "R":                    
+        case 3:                    
             vertex1 = { "x": square.column * square_size, "y": (square.row - 1) * square_size }; // #2
-            vertex2 = { "x": square.column * square_size, "y": square.row * square_size }; // #4
-            break;
-
-        case "D":                    
-            vertex1 = { "x": (square.column - 1) * square_size, "y": square.row * square_size }; // #3
             vertex2 = { "x": square.column * square_size, "y": square.row * square_size }; // #4
             break;
 
