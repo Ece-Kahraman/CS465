@@ -143,9 +143,9 @@ window.onload = function init() {
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
 
             if(mouseClicked) {        
-                color = vec4(colors[color_menu.selectedIndex]);
+                color = colors[color_menu.selectedIndex];
             } else if (eraserClicked) {
-                color = vec4( 0.0, 0.0, 0.0, 0.0 );         
+                color = vec4( 1.0, 1.0, 1.0, 1.0 );         
             }
 
             for( var i = 0; i < 3; i++) {
