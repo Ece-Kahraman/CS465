@@ -82,10 +82,12 @@ window.onload = function init() {
 
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
             var color = vec4(colors[color_menu.selectedIndex]);
-            gl.bufferSubData(gl.ARRAY_BUFFER, 16*index, flatten(color));
+            for( var i = 0; i < 3; i++){
+                gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
+                color_index++;
+            }            
 
             index += 3;
-            color_index++;
             console.log(index);
         }
     });
