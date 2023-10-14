@@ -1,5 +1,3 @@
-
-
 var gl;
 var points;
 var canvas;
@@ -11,10 +9,12 @@ var triangle;
 var square;
 var square_size = 20;
 var sqTri;
+var color;
 var pointX;
 var pointY;
 let vertex_arrays = {};
 var mouseClicked = false;
+var eraserClicked = false;
 var index = 0;
 var color_index = 0;
 var maxNumTriangles = 3600;
@@ -39,11 +39,11 @@ window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
     undoButton = document.getElementById("undo");
     redoButton = document.getElementById("redo");
+    draw_mode = document.getElementById("draw-mode");
+    erase_mode = document.getElementById("erase-mode");
 
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) { alert("WebGL isn't available"); }
-
-    //console.log("Canvas: (%s, %s)", canvas.width, canvas.height);
 
     color_menu = document.getElementById("color-menu");
 
@@ -93,20 +93,26 @@ window.onload = function init() {
         console.log(undoStack, redoStack);
     });
 
+
     canvas.addEventListener("mousedown", function () {
-        //console.log("mouse down");
-        mouseClicked = true;
+        if(draw_mode.checked == true){
+            mouseClicked = true;
+        } else if(erase_mode.checked == true){
+            eraserClicked = true;
+        }
     });
 
     canvas.addEventListener("mouseup", function () {
-        //console.log("mouse up");
-        mouseClicked = false;
+        if(draw_mode.checked == true){
+            mouseClicked = false;
+        } else if(erase_mode.checked == true){
+            eraserClicked = false;
+        }
     });
 
     canvas.addEventListener("mousemove", function (event) {
-        //console.log("Mouse: (%s, %s)", event.clientX, event.clientY);
 
-        if (mouseClicked) {
+        if (mouseClicked || eraserClicked) {
 
             pointX = event.clientX - 8;
             pointY = event.clientY - 8;
@@ -130,14 +136,20 @@ window.onload = function init() {
                 p2.x, p2.y,
                 p3.x, p3.y
             ];
-    
-            //console.log(vertex_arrays);
+
             gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
             gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
     
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+
+            if(mouseClicked) {        
+                color = vec4(colors[color_menu.selectedIndex]);
+            } else if (eraserClicked) {
+                color = vec4( 0.0, 0.0, 0.0, 0.0 );         
+            }
+
             for( var i = 0; i < 3; i++) {
-                gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(vec4(colors[color_menu.selectedIndex])));
+                gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
                 color_index++;
             }
 
@@ -197,11 +209,8 @@ window.onload = function init() {
 
 
 function render() {
-    //console.log("render");
-    // Clear the canvas
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, index);
-    //gl.drawElements(gl.TRIANGLES, index, gl.UNSIGNED_SHORT, 0);
     requestAnimFrame(render);
 }
 
