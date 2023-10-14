@@ -48,7 +48,6 @@ void main() {
                 <input type="radio" id="erase-mode" name="mode">
                 <label for="erase-mode">Erase!</label>
             </div>
-            <br/><br/>
 
             <label for="color-menu">Select a color:</label>
             <select id="color-menu">
@@ -61,9 +60,11 @@ void main() {
                 <option value="6">Cyan</option>
             </select>
             <br/><br/>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="undo">Undo</button> &nbsp;&nbsp;
-            <button id="redo">Redo</button>
+            <div style="display: flex; align-items: center;">
+                <button id="undoButton">Undo</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="redoButton">Redo</button>
+            </div>
             <br/><br/>
     
         </div>

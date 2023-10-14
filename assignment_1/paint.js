@@ -37,8 +37,8 @@ var colors = [
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
-    undoButton = document.getElementById("undo");
-    redoButton = document.getElementById("redo");
+    undoButton = document.getElementById("undoButton");
+    redoButton = document.getElementById("redoButton");
     draw_mode = document.getElementById("draw-mode");
     erase_mode = document.getElementById("erase-mode");
 
@@ -203,7 +203,6 @@ window.onload = function init() {
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
 
-
     render();
 };
 
@@ -223,7 +222,6 @@ function findSquareLocation(x, y) {
     if (y == canvas.height) { sq_row--; }
 
     return { "row": sq_row, "column": sq_column };
-
 }
 
 function findTriangleLocation(x, y, sq_col, sq_row) {
@@ -240,7 +238,6 @@ function findTriangleLocation(x, y, sq_col, sq_row) {
     else if (relativeX >= relativeY && (relativeX + relativeY) >= square_size) { return 3; }
 
     return 0; // just in case
-
 }
 
 function getTriangleCoordinates(triangle_direction){
@@ -276,7 +273,6 @@ function getTriangleCoordinates(triangle_direction){
     }
 
     return {"v1": vertex1, "v2": vertex2};
-
 }
 
 function convertLocation(x, y) {
@@ -285,6 +281,4 @@ function convertLocation(x, y) {
         "x": (x - (canvas.width / 2)) / (canvas.width / 2),
         "y": ((y - (canvas.width / 2)) * -1) / (canvas.width / 2)
     };
-
 }
-
