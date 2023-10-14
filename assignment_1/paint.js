@@ -70,8 +70,8 @@ window.onload = function init() {
         console.log(undoStack, redoStack);
     });
 
-    redoButton.addEventListener("click", function () {
-        if (!redoStack.length) return;
+    redoButton.addEventListener("click", function (e) {
+        if (!redoStack.length || e.button != 0) return;
         var nextStroke = redoStack.pop();
         var color = nextStroke.pop();
 
@@ -94,7 +94,8 @@ window.onload = function init() {
     });
 
 
-    canvas.addEventListener("mousedown", function () {
+    canvas.addEventListener("mousedown", function (e) {
+        if (e.button != 0) return;
         if(draw_mode.checked == true){
             mouseClicked = true;
         } else if(erase_mode.checked == true){
@@ -102,7 +103,8 @@ window.onload = function init() {
         }
     });
 
-    canvas.addEventListener("mouseup", function () {
+    canvas.addEventListener("mouseup", function (e) {
+        if (e.button != 0) return;
         if(draw_mode.checked == true){
             mouseClicked = false;
         } else if(erase_mode.checked == true){
