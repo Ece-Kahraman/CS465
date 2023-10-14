@@ -8,7 +8,6 @@ var square;
 var square_size = 20;
 var pointX;
 var pointY;
-let vertices = [];
 let vertex_arrays = {};
 var mouseClicked = false;
 var index = 0;
