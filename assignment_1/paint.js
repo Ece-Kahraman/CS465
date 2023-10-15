@@ -24,6 +24,9 @@ var undoStack = [], redoStack = [];
 var maxStackSize = 32;
 var changeBuffer = [];
 
+var t_matrix;
+var uni_loc;
+
 var colors = [
     vec4( 0.0, 0.0, 0.0, 1.0 ),  // black
     vec4( 1.0, 0.0, 0.0, 1.0 ),  // red
@@ -203,14 +206,24 @@ window.onload = function init() {
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
 
+    t_matrix = mat4(1);
+    t_matrix[0][0] = 2;
+    t_matrix[1][1] = 2;
+    t_matrix[2][2] = 2;
+    uni_loc = { matrix: gl.getUniformLocation(program, "matrix") };
+
     render();
 };
 
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, index);
+    
     requestAnimFrame(render);
+
+    gl.uniformMatrix4fv(uni_loc.matrix, false, flatten(t_matrix));
+
+    gl.drawArrays(gl.TRIANGLES, 0, index);
 }
 
 function findSquareLocation(x, y) {
