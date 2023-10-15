@@ -53,7 +53,6 @@ window.onload = function init() {
         var t = lastStroke.pop();
 
         lastStroke.forEach(e => {
-            // 1000 * square.column + 10 * square.row + triangle
             var tri = e % 10;
             var row = Math.floor((e % 1000) / 10);
             var column = Math.floor(e / 1000);
@@ -76,7 +75,6 @@ window.onload = function init() {
         var color = nextStroke.pop();
 
         nextStroke.forEach(e => {
-            // 1000 * square.column + 10 * square.row + triangle
             var tri = e % 10;
             var row = Math.floor((e % 1000) / 10);
             var column = Math.floor(e / 1000);
