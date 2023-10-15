@@ -24,8 +24,16 @@ var undoStack = [], redoStack = [];
 var maxStackSize = 32;
 var changeBuffer = [];
 
-var t_matrix;
+var transformation_matrix;
+var scaling_matrix = mat4(1);
+var translation_matrix = mat4(1);
+var last_pos_matrix = mat4(1);
 var uni_loc;
+
+var drag_start = {
+    x: -1,
+    y: -1
+};
 
 var colors = [
     vec4( 0.0, 0.0, 0.0, 1.0 ),  // black
@@ -94,18 +102,42 @@ window.onload = function init() {
         console.log(undoStack, redoStack);
     });
 
-
     canvas.addEventListener("mousedown", function (e) {
-        if (e.button != 0) return;
-        if(draw_mode.checked == true){
-            mouseClicked = true;
-        } else if(erase_mode.checked == true){
-            eraserClicked = true;
+        
+        switch (e.button) {
+            case 0: //sol
+                if(draw_mode.checked == true){
+                    mouseClicked = true;
+                } else if(erase_mode.checked == true){
+                    eraserClicked = true;
+                }
+                break;
+            
+            case 1: //wheel
+                last_pos_matrix[0][3] = translation_matrix[0][3];
+                last_pos_matrix[1][3] = translation_matrix[1][3];
+
+                drag_start.x = e.clientX;
+                drag_start.y = e.clientY;
+                
+                
+
+                break;
+
+            case 2: //sağ
+                break;
+
+            default:
+                console.log("Don't default please.");
+                return;
         }
+        
     });
 
     canvas.addEventListener("mouseup", function (e) {
-        if (e.button != 0) return;
+        if (e.button != 0) {
+            return;   
+        }
         if(draw_mode.checked == true){
             mouseClicked = false;
         } else if(erase_mode.checked == true){
@@ -113,54 +145,62 @@ window.onload = function init() {
         }
     });
 
-    canvas.addEventListener("mousemove", function (event) {
+    canvas.addEventListener("mousemove", function (e) {
+        
+        if (draw_mode.checked || erase_mode.checked) {
+            
+            pointX = e.clientX - 8;
+            pointY = e.clientY - 8;
 
-        if (mouseClicked || eraserClicked) {
+           if ( e.buttons == 1 ){
 
-            pointX = event.clientX - 8;
-            pointY = event.clientY - 8;
+                square = findSquareLocation(pointX, pointY);
+                triangle = findTriangleLocation(pointX, pointY, square.column, square.row);
 
-            square = findSquareLocation(pointX, pointY);
-            triangle = findTriangleLocation(pointX, pointY, square.column, square.row);
+                var square_center = {
+                    "x": ((square.column - 1) * square_size) + (square_size/2),
+                    "y": ((square.row - 1) * square_size) + (square_size/2)
+                };
+        
+                var coordinates = getTriangleCoordinates(triangle);
+        
+                p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
+                p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
+                p3 = convertLocation(square_center.x, square_center.y);
+        
+                vertex_arrays = [
+                    p1.x, p1.y,
+                    p2.x, p2.y,
+                    p3.x, p3.y
+                ];
 
-            var square_center = {
-                "x": ((square.column - 1) * square_size) + (square_size/2),
-                "y": ((square.row - 1) * square_size) + (square_size/2)
-            };
-    
-            var coordinates = getTriangleCoordinates(triangle);
-    
-            p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
-            p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
-            p3 = convertLocation(square_center.x, square_center.y);
-    
-            vertex_arrays = [
-                p1.x, p1.y,
-                p2.x, p2.y,
-                p3.x, p3.y
-            ];
+                gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
+                gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
+        
+                gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
 
-            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
-            gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
-    
-            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+                if(draw_mode.checked) {        
+                    color = colors[color_menu.selectedIndex];
+                } else if (erase_mode.checked) {
+                    color = vec4( 1.0, 1.0, 1.0, 1.0 );         
+                }
 
-            if(mouseClicked) {        
-                color = colors[color_menu.selectedIndex];
-            } else if (eraserClicked) {
-                color = vec4( 1.0, 1.0, 1.0, 1.0 );         
-            }
+                for( var i = 0; i < 3; i++) {
+                    gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
+                    color_index++;
+                }
 
-            for( var i = 0; i < 3; i++) {
-                gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
-                color_index++;
-            }
+                index = (index + 3) % maxNumTriangles;
 
-            index = (index + 3) % maxNumTriangles;
+                sqTri = 1000 * square.column + 10 * square.row + triangle;
+                if (!changeBuffer.includes(sqTri))
+                    changeBuffer.push(sqTri);
 
-            sqTri = 1000 * square.column + 10 * square.row + triangle;
-            if (!changeBuffer.includes(sqTri))
-                changeBuffer.push(sqTri);
+           } else if (e.buttons == 4) {
+                translation_matrix[0][3] = last_pos_matrix[0][3] + (2 * (pointX - drag_start.x) / canvas.width);
+                translation_matrix[1][3] = last_pos_matrix[1][3] - (2 * (pointY - drag_start.y) / canvas.height);
+
+           }
         }
         else {
             if (changeBuffer.length) {
@@ -173,6 +213,15 @@ window.onload = function init() {
                 }
             }
         }
+    });
+
+    canvas.addEventListener("wheel", function (e) {
+        var direction = e.deltaY > 0 ? -1 : 1;
+
+        scaling_matrix[0][0] += direction * 0.2;
+        scaling_matrix[1][1] += direction * 0.2;
+        scaling_matrix[2][2] += direction * 0.2;
+
     });
 
     //
@@ -206,10 +255,6 @@ window.onload = function init() {
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
 
-    t_matrix = mat4(1);
-    t_matrix[0][0] = 2;
-    t_matrix[1][1] = 2;
-    t_matrix[2][2] = 2;
     uni_loc = { matrix: gl.getUniformLocation(program, "matrix") };
 
     render();
@@ -220,8 +265,8 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     
     requestAnimFrame(render);
-
-    gl.uniformMatrix4fv(uni_loc.matrix, false, flatten(t_matrix));
+    transformation_matrix = mult(translation_matrix, mult(scaling_matrix, mat4(1)));
+    gl.uniformMatrix4fv(uni_loc.matrix, false, flatten(transformation_matrix));
 
     gl.drawArrays(gl.TRIANGLES, 0, index);
 }
