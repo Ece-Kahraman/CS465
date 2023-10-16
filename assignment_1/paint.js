@@ -118,7 +118,7 @@ window.onload = function init() {
     }
 
     saveButton.addEventListener("click", function () {
-        var stringified = JSON.stringify(triangles_list);
+        var stringified = JSON.stringify({data: triangles_list, color: color_menu.selectedIndex, layer: layer});
 
         saveButton.href = "data:application/xml;charset=utf-8," + stringified;
     });
@@ -130,7 +130,15 @@ window.onload = function init() {
         reader.onload = readerEvent => {
             var content = readerEvent.target.result;
             
-            triangles_list = JSON.parse(content);
+            var data_dict = JSON.parse(content);
+
+            triangles_list = data_dict.data;
+
+            color_menu.selectedIndex = data_dict.color;
+
+            layer = data_dict.layer;
+            for (let i = 0; i < layers.length; layers[i++].checked = layer == i);
+
             for( var i = 0; i < maxNumTriangles; i++ ){
                 drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 0);
             }
@@ -361,33 +369,43 @@ window.onload = function init() {
                 break;
             case "ArrowLeft":
                 deltaX--;
+
+                
                 break;
-            case "ArrowRight":
-                deltaX++;
+            case "ArrowRight":                              
+
+                for (var col = selectEnd[0]; col >= selectStart[0]; col--) {
+                    for (var row = selectStart[1]; row < selectEnd[1]; row++) {
+                        for (let tri = 0; tri < 4; tri++) {
+
+                            if( col < 1 || col >= 29 || row < 1 || row >= 29) return;
+                            
+                            triangles_list[3][col + 1][row][tri] = triangles_list[3][col][row][tri];
+                            triangles_list[layer][col + 1][row][tri] = triangles_list[layer][col][row][tri];
+
+                            if(col == selectStart[0] ){
+                                triangles_list[3][col][row][tri] = 0;
+                                triangles_list[layer][col][row][tri] = -1   ;
+                            }
+                            
+                        }
+                    }
+                }
+
+                selectEnd[0]++;
+                selectStart[0]++;
+
                 break;
             default:
                 return;
-        }
+        }           
 
-        var col = selectStart[0];
-        if (deltaX < 0 && col > 0) col--; 
-        else if (deltaX > 0 && col < 29) col++;
-
-        var row = selectStart[1];
-        if (deltaY < 0 && row > 0) row--; 
-        else if (deltaY > 0 && row < 29) row++;
-
-        for (; col < selectEnd[0] + deltaX; col++) {
-            for (; row < selectEnd[1] + deltaY; row++) {
-                for (let tri = 0; tri < 4; tri++) {
-                    triangles_list[3][col + deltaX][row + deltaY][tri] = triangles_list[3][col][row][tri];
-                    triangles_list[layer][col + deltaX][row + deltaY][tri] = triangles_list[layer][col][row][tri];
-                    
-                    var i = tri + (row) * 4 + (col) * 120;
-                    drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 
-                    triangles_list[3][col + deltaX][row + deltaY][tri] );
-                }
-            }
+        for( var i = 0; i < maxNumTriangles; i++){
+            var tri = i % 4;
+            var row = Math.floor((i % 120) / 4);
+            var column = Math.floor(i / 120);
+            drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 
+                    triangles_list[3][column][row][tri] );
         }
 
     });
