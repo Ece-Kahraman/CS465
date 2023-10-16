@@ -8,15 +8,13 @@ var buffer;
 var triangle;
 var square;
 var square_size = 20;
-var sqTri;
 var color;
 var pointX;
 var pointY;
 let vertex_arrays = {};
 var mouseClicked = false;
 var eraserClicked = false;
-var index = 0;
-var color_index = 0;
+var index;
 var maxNumTriangles = 3600;
 var maxNumVertices  = 3 * maxNumTriangles;
 
@@ -64,11 +62,38 @@ window.onload = function init() {
         var t = lastStroke.pop();
 
         lastStroke.forEach(e => {
-            var tri = e % 10;
-            var row = Math.floor((e % 1000) / 10);
-            var column = Math.floor(e / 1000);
+            var tri = e % 4;
+            var row = Math.floor((e % 120) / 4);
+            var column = Math.floor(e / 120);
+            console.log(tri, " ", row, " ", column);
+            
+            index = tri + row * 4 + column * 120;
 
-            // delete triangle
+            var square_center = {
+                "x": (column * square_size) + (square_size / 2),
+                "y": (row * square_size) + (square_size / 2)
+            };
+
+            var coordinates = getTriangleCoordinates(tri, column, row);
+
+            p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
+            p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
+            p3 = convertLocation(square_center.x, square_center.y);
+
+            vertex_arrays = [
+                p1.x, p1.y,
+                p2.x, p2.y,
+                p3.x, p3.y
+            ];
+
+            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+            gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
+        
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            for( var i = 0; i < 3; i++) {
+                gl.bufferSubData(gl.ARRAY_BUFFER, 48*index+16*i, flatten(vec4(1.0, 1.0, 1.0, 1.0)));
+            }
+
         });
 
         lastStroke.push(t);
@@ -86,11 +111,41 @@ window.onload = function init() {
         var color = nextStroke.pop();
 
         nextStroke.forEach(e => {
-            var tri = e % 10;
-            var row = Math.floor((e % 1000) / 10);
-            var column = Math.floor(e / 1000);
+            var tri = e % 4;
+            var row = Math.floor((e % 120) / 4);
+            var column = Math.floor(e / 120);
 
-            // draw triangle
+            console.log(tri, " ", row, " ", column);
+            
+            index = tri + row * 4 + column * 120;
+
+            var square_center = {
+                "x": (column * square_size) + (square_size / 2),
+                "y": (row * square_size) + (square_size / 2)
+            };
+
+            var coordinates = getTriangleCoordinates(tri, column, row);
+
+            p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
+            p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
+            p3 = convertLocation(square_center.x, square_center.y);
+
+            vertex_arrays = [
+                p1.x, p1.y,
+                p2.x, p2.y,
+                p3.x, p3.y
+            ];
+
+            console.log("redo: ", vertex_arrays);
+
+            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+            gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
+        
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            for( var i = 0; i < 3; i++) {
+                gl.bufferSubData(gl.ARRAY_BUFFER, 48*index+16*i, flatten(colors[color]));
+            }
+
         });
 
         nextStroke.push(color);
@@ -106,11 +161,6 @@ window.onload = function init() {
         
         switch (e.button) {
             case 0: //sol
-                if(draw_mode.checked == true){
-                    mouseClicked = true;
-                } else if(erase_mode.checked == true){
-                    eraserClicked = true;
-                }
                 break;
             
             case 1: //wheel
@@ -119,8 +169,6 @@ window.onload = function init() {
 
                 drag_start.x = e.clientX;
                 drag_start.y = e.clientY;
-                
-                
 
                 break;
 
@@ -128,7 +176,7 @@ window.onload = function init() {
                 break;
 
             default:
-                console.log("Don't default please.");
+                alert("This mouse button is not usable!");
                 return;
         }
         
@@ -147,7 +195,7 @@ window.onload = function init() {
 
     canvas.addEventListener("mousemove", function (e) {
         
-        if (draw_mode.checked || erase_mode.checked) {
+        if ( e.buttons == 1 ) {
             
             pointX = e.clientX - 8;
             pointY = e.clientY - 8;
@@ -157,12 +205,14 @@ window.onload = function init() {
                 square = findSquareLocation(pointX, pointY);
                 triangle = findTriangleLocation(pointX, pointY, square.column, square.row);
 
+                index = triangle + square.row * 4 + square.column * 120;
+
                 var square_center = {
-                    "x": ((square.column - 1) * square_size) + (square_size/2),
-                    "y": ((square.row - 1) * square_size) + (square_size/2)
+                    "x": (square.column  * square_size) + (square_size/2),
+                    "y": (square.row * square_size) + (square_size/2)
                 };
         
-                var coordinates = getTriangleCoordinates(triangle);
+                var coordinates = getTriangleCoordinates(triangle, square.column, square.row);
         
                 p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
                 p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
@@ -174,8 +224,8 @@ window.onload = function init() {
                     p3.x, p3.y
                 ];
 
-                gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer ); 
-                gl.bufferSubData(gl.ARRAY_BUFFER, 8*index, flatten(vertex_arrays));
+                gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+                gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
         
                 gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
 
@@ -186,15 +236,13 @@ window.onload = function init() {
                 }
 
                 for( var i = 0; i < 3; i++) {
-                    gl.bufferSubData(gl.ARRAY_BUFFER, 16*color_index, flatten(color));
-                    color_index++;
+                    gl.bufferSubData(gl.ARRAY_BUFFER, 48*index+16*i, flatten(color));
                 }
 
-                index = (index + 3) % maxNumTriangles;
+                if (!changeBuffer.includes(index))
+                    changeBuffer.push(index);
 
-                sqTri = 1000 * square.column + 10 * square.row + triangle;
-                if (!changeBuffer.includes(sqTri))
-                    changeBuffer.push(sqTri);
+                
 
            } else if (e.buttons == 4) {
                 translation_matrix[0][3] = last_pos_matrix[0][3] + (2 * (pointX - drag_start.x) / canvas.width);
@@ -207,6 +255,7 @@ window.onload = function init() {
                 undoStack.push([...changeBuffer, color_menu.selectedIndex]);
                 redoStack = [];
                 changeBuffer = [];
+                console.log(undoStack);
 
                 if (undoStack.length > maxStackSize) {
                     undoStack.shift();
@@ -269,11 +318,12 @@ window.onload = function init() {
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     
-    requestAnimFrame(render);
+    
+    gl.drawArrays(gl.TRIANGLES, 0, maxNumVertices);
     transformation_matrix = mult(translation_matrix, mult(scaling_matrix, mat4(1)));
     gl.uniformMatrix4fv(uni_loc.matrix, false, flatten(transformation_matrix));
 
-    gl.drawArrays(gl.TRIANGLES, 0, index);
+    requestAnimFrame(render);
 }
 
 function findSquareLocation(x, y) {
@@ -284,7 +334,7 @@ function findSquareLocation(x, y) {
     if (x == canvas.width) { sq_column--; }
     if (y == canvas.height) { sq_row--; }
 
-    return { "row": sq_row, "column": sq_column };
+    return { "row": sq_row-1, "column": sq_column-1 };
 }
 
 function findTriangleLocation(x, y, sq_col, sq_row) {
@@ -292,8 +342,8 @@ function findTriangleLocation(x, y, sq_col, sq_row) {
     // "relative" means that treat each square 
     // like it is the main 20*20 HTML square
 
-    var relativeX = x - ((sq_col - 1) * square_size);
-    var relativeY = y - ((sq_row - 1) * square_size);
+    var relativeX = x - (sq_col  * square_size);
+    var relativeY = y - (sq_row  * square_size);
 
     if (relativeX < relativeY && (relativeX + relativeY) < square_size) { return 0; }
     else if (relativeX < relativeY && (relativeX + relativeY) >= square_size) { return 1; }
@@ -303,7 +353,7 @@ function findTriangleLocation(x, y, sq_col, sq_row) {
     return 0; // just in case
 }
 
-function getTriangleCoordinates(triangle_direction){
+function getTriangleCoordinates(triangle_direction, sq_col, sq_row){
 
     switch (triangle_direction) {                
         // #1: top-left corner
@@ -312,23 +362,23 @@ function getTriangleCoordinates(triangle_direction){
         // #4: bottom-right corner
 
         case 0:                    
-            vertex1 = { "x": (square.column - 1) * square_size, "y": (square.row - 1) * square_size }; // #1                    
-            vertex2 = { "x": (square.column - 1) * square_size, "y": square.row * square_size }; // #3
+            vertex1 = { "x": sq_col * square_size, "y": sq_row * square_size }; // #1                    
+            vertex2 = { "x": sq_col * square_size, "y": (sq_row + 1) * square_size }; // #3
             break;
 
         case 1:                    
-            vertex1 = { "x": (square.column - 1) * square_size, "y": square.row * square_size }; // #3
-            vertex2 = { "x": square.column * square_size, "y": square.row * square_size }; // #4
+            vertex1 = { "x": sq_col * square_size, "y": (sq_row + 1) * square_size }; // #3
+            vertex2 = { "x": (sq_col + 1) * square_size, "y": (sq_row + 1) * square_size }; // #4
             break;
 
         case 2:
-            vertex1 = { "x": (square.column - 1) * square_size, "y": (square.row - 1) * square_size }; // #1
-            vertex2 = { "x": square.column * square_size, "y": (square.row - 1) * square_size }; // #2
+            vertex1 = { "x": sq_col * square_size, "y": sq_row * square_size }; // #1
+            vertex2 = { "x": (sq_col + 1) * square_size, "y": sq_row * square_size }; // #2
             break;
 
         case 3:                    
-            vertex1 = { "x": square.column * square_size, "y": (square.row - 1) * square_size }; // #2
-            vertex2 = { "x": square.column * square_size, "y": square.row * square_size }; // #4
+            vertex1 = { "x": (sq_col + 1) * square_size, "y": sq_row * square_size }; // #2
+            vertex2 = { "x": (sq_col + 1) * square_size, "y": (sq_row + 1) * square_size }; // #4
             break;
 
         default:
