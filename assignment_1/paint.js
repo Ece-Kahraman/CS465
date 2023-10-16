@@ -56,6 +56,7 @@ window.onload = function init() {
 
     color_menu = document.getElementById("color-menu");
 
+
     undoButton.addEventListener("click", function () {
         if (!undoStack.length) return;
         var lastStroke = undoStack.pop();
@@ -68,30 +69,10 @@ window.onload = function init() {
             console.log(tri, " ", row, " ", column);
             
             index = tri + row * 4 + column * 120;
-
-            var square_center = {
-                "x": (column * square_size) + (square_size / 2),
-                "y": (row * square_size) + (square_size / 2)
-            };
-
-            var coordinates = getTriangleCoordinates(tri, column, row);
-
-            p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
-            p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
-            p3 = convertLocation(square_center.x, square_center.y);
-
-            vertex_arrays = [
-                p1.x, p1.y,
-                p2.x, p2.y,
-                p3.x, p3.y
-            ];
-
-            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-            gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
-        
+       
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
             for( var i = 0; i < 3; i++) {
-                gl.bufferSubData(gl.ARRAY_BUFFER, 48*index+16*i, flatten(vec4(1.0, 1.0, 1.0, 1.0)));
+                gl.bufferSubData(gl.ARRAY_BUFFER, 48*index+16*i, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
             }
 
         });
@@ -118,28 +99,6 @@ window.onload = function init() {
             console.log(tri, " ", row, " ", column);
             
             index = tri + row * 4 + column * 120;
-
-            var square_center = {
-                "x": (column * square_size) + (square_size / 2),
-                "y": (row * square_size) + (square_size / 2)
-            };
-
-            var coordinates = getTriangleCoordinates(tri, column, row);
-
-            p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
-            p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
-            p3 = convertLocation(square_center.x, square_center.y);
-
-            vertex_arrays = [
-                p1.x, p1.y,
-                p2.x, p2.y,
-                p3.x, p3.y
-            ];
-
-            console.log("redo: ", vertex_arrays);
-
-            gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-            gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
         
             gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
             for( var i = 0; i < 3; i++) {
@@ -207,32 +166,13 @@ window.onload = function init() {
 
                 index = triangle + square.row * 4 + square.column * 120;
 
-                var square_center = {
-                    "x": (square.column  * square_size) + (square_size/2),
-                    "y": (square.row * square_size) + (square_size/2)
-                };
-        
-                var coordinates = getTriangleCoordinates(triangle, square.column, square.row);
-        
-                p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
-                p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
-                p3 = convertLocation(square_center.x, square_center.y);
-        
-                vertex_arrays = [
-                    p1.x, p1.y,
-                    p2.x, p2.y,
-                    p3.x, p3.y
-                ];
-
-                gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
-                gl.bufferSubData(gl.ARRAY_BUFFER, 24*index, flatten(vertex_arrays));
         
                 gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
 
                 if(draw_mode.checked) {        
                     color = colors[color_menu.selectedIndex];
                 } else if (erase_mode.checked) {
-                    color = vec4( 1.0, 1.0, 1.0, 1.0 );         
+                    color = vec4( 0.0, 0.0, 0.0, 0.0 );         
                 }
 
                 for( var i = 0; i < 3; i++) {
@@ -295,6 +235,7 @@ window.onload = function init() {
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, 8*maxNumVertices, gl.DYNAMIC_DRAW);
 
+
     var vPosition = gl.getAttribLocation(program, "vPosition");
     gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
@@ -308,6 +249,39 @@ window.onload = function init() {
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
+
+    for( var i = 0; i < maxNumTriangles; i++) {
+
+        var tri = i % 4;
+        var row = Math.floor((i % 120) / 4);
+        var column = Math.floor(i / 120);
+
+        var square_center = {
+            "x": (column  * square_size) + (square_size/2),
+            "y": (row * square_size) + (square_size/2)
+        };
+
+        var coordinates = getTriangleCoordinates(tri, column, row);
+
+        p1 = convertLocation(coordinates.v1.x, coordinates.v1.y);
+        p2 = convertLocation(coordinates.v2.x, coordinates.v2.y);
+        p3 = convertLocation(square_center.x, square_center.y);
+
+        vertex_arrays = [
+            p1.x, p1.y,
+            p2.x, p2.y,
+            p3.x, p3.y
+        ];
+
+        gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+        gl.bufferSubData(gl.ARRAY_BUFFER, 24*i, flatten(vertex_arrays));
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+        for( var j = 0; j < 3; j++) {
+            gl.bufferSubData(gl.ARRAY_BUFFER, 48*i+16*j, flatten(vec4(0.0, 0.0, 0.0, 0.0)));
+        }
+
+    }
 
     uni_loc = { matrix: gl.getUniformLocation(program, "matrix") };
 
