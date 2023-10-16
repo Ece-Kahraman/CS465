@@ -1,6 +1,7 @@
 var gl;
 var points;
 var canvas;
+var saveButton, loadButton;
 var undoButton;
 var redoButton;
 var selection, selectReset;
@@ -72,6 +73,8 @@ var swap_buttons;
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
+    saveButton = document.getElementById("save");
+    loadButton = document.getElementById("load");
     undoButton = document.getElementById("undoButton");
     redoButton = document.getElementById("redoButton");
     draw_mode = document.getElementById("draw-mode");
@@ -113,6 +116,26 @@ window.onload = function init() {
             }
         });
     }
+
+    saveButton.addEventListener("click", function () {
+        var stringified = JSON.stringify(triangles_list);
+
+        saveButton.href = "data:application/xml;charset=utf-8," + stringified;
+    });
+
+    loadButton.addEventListener("change", function (e) { 
+        var reader = new FileReader();
+        reader.readAsText(e.target.files[0], "utf-8");
+
+        reader.onload = readerEvent => {
+            var content = readerEvent.target.result;
+            
+            triangles_list = JSON.parse(content);
+            for( var i = 0; i < maxNumTriangles; i++ ){
+                drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 0);
+            }
+        }
+     });
 
     undoButton.addEventListener("click", function () {
         if (!undoStack.length) return;
@@ -176,24 +199,19 @@ window.onload = function init() {
     });
 
     function resetSelect(newSelection) {
-      selectFlag = newSelection === "new" ? selectFlag : false;
-      document.getElementById("selectflag").hidden = !selectFlag;
+        selectFlag = newSelection === "new" ? selectFlag : false;
+        document.getElementById("selectflag").hidden = !selectFlag;
 
-      for (let col = 0; col < 30; col++) {
-        for (let row = 0; row < 30; row++) {
-          for (let tri = 0; tri < 4; tri++) {
-            triangles_list[3][col][row][tri] = 0;
-            var i = tri + row * 4 + col * 120;
-            drawTriangle(
-              determineTopLayerColor(i),
-              i,
-              vBuffer,
-              cBuffer,
-              triangles_list[3][col][row][tri]
-            );
-          }
+        for (let col = 0; col < 30; col++) {
+            for (let row = 0; row < 30; row++) {
+                for (let tri = 0; tri < 4; tri++) {
+                    triangles_list[3][col][row][tri] = 0;
+                        var i = tri + row * 4 + col * 120;
+                        drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer,
+                        triangles_list[3][col][row][tri]);
+                }
+            }
         }
-      }
     }
 
     selectReset.addEventListener("click", resetSelect);
@@ -328,6 +346,50 @@ window.onload = function init() {
                 }
             }
         }
+    });
+
+    window.addEventListener("keydown", function (e) {
+        if (!selectFlag) return;
+        var deltaX = 0, deltaY = 0;
+
+        switch (e.key) {
+            case "ArrowUp":
+                deltaY--;
+                break;
+            case "ArrowDown":
+                deltaY++;
+                break;
+            case "ArrowLeft":
+                deltaX--;
+                break;
+            case "ArrowRight":
+                deltaX++;
+                break;
+            default:
+                return;
+        }
+
+        var col = selectStart[0];
+        if (deltaX < 0 && col > 0) col--; 
+        else if (deltaX > 0 && col < 29) col++;
+
+        var row = selectStart[1];
+        if (deltaY < 0 && row > 0) row--; 
+        else if (deltaY > 0 && row < 29) row++;
+
+        for (; col < selectEnd[0] + deltaX; col++) {
+            for (; row < selectEnd[1] + deltaY; row++) {
+                for (let tri = 0; tri < 4; tri++) {
+                    triangles_list[3][col + deltaX][row + deltaY][tri] = triangles_list[3][col][row][tri];
+                    triangles_list[layer][col + deltaX][row + deltaY][tri] = triangles_list[layer][col][row][tri];
+                    
+                    var i = tri + (row) * 4 + (col) * 120;
+                    drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 
+                    triangles_list[3][col + deltaX][row + deltaY][tri] );
+                }
+            }
+        }
+
     });
 
 
