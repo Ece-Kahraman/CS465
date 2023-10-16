@@ -218,9 +218,14 @@ window.onload = function init() {
     canvas.addEventListener("wheel", function (e) {
         var direction = e.deltaY > 0 ? -1 : 1;
 
-        scaling_matrix[0][0] += direction * 0.2;
-        scaling_matrix[1][1] += direction * 0.2;
-        scaling_matrix[2][2] += direction * 0.2;
+        var dummy = scaling_matrix[0][0] + direction * 0.1;
+        if( dummy <= 0.1  || dummy >= 10 ){
+            return;
+        }
+
+        scaling_matrix[0][0] += direction * 0.15;
+        scaling_matrix[1][1] += direction * 0.15;
+        scaling_matrix[2][2] += direction * 0.15;
 
     });
 
