@@ -116,6 +116,20 @@ window.onload = function init() {
         console.log(undoStack, redoStack);
     });
 
+    canvas.addEventListener("wheel", function (e) {
+        var direction = e.deltaY > 0 ? -1 : 1;
+
+        var dummy = scaling_matrix[0][0] + direction * 0.1;
+        if( dummy <= 0.1  || dummy >= 10 ){
+            return;
+        }
+
+        scaling_matrix[0][0] += direction * 0.15;
+        scaling_matrix[1][1] += direction * 0.15;
+        scaling_matrix[2][2] += direction * 0.15;
+
+    });
+
     canvas.addEventListener("mousedown", function (e) {
         
         switch (e.button) {
@@ -157,7 +171,14 @@ window.onload = function init() {
         if ( e.buttons == 1 ) {
             
             pointX = e.clientX - 8;
-            pointY = e.clientY - 8;
+            console.log("first ", pointX);
+            var dum = 1 - scaling_matrix[0][0];
+            pointX = (((e.clientX - 8) - ((dum*canvas.width)/2))/ (canvas.width - dum*canvas.width)) * canvas.width;
+            pointY = (((e.clientY - 8) - ((dum*canvas.height)/2))/ (canvas.height - dum*canvas.height)) * canvas.height;
+            console.log("scaled ", pointX);
+            
+
+            //pointY = (e.clientY - 8) - canvas.height / 2;
 
            if ( e.buttons == 1 ){
 
@@ -204,20 +225,7 @@ window.onload = function init() {
         }
     });
 
-    canvas.addEventListener("wheel", function (e) {
-        var direction = e.deltaY > 0 ? -1 : 1;
-
-        var dummy = scaling_matrix[0][0] + direction * 0.1;
-        if( dummy <= 0.1  || dummy >= 10 ){
-            return;
-        }
-
-        scaling_matrix[0][0] += direction * 0.15;
-        scaling_matrix[1][1] += direction * 0.15;
-        scaling_matrix[2][2] += direction * 0.15;
-
-    });
-
+    
     //
     //  Configure WebGL
     //
