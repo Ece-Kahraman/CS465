@@ -170,6 +170,7 @@ window.onload = function init() {
 
     selection.addEventListener("click", function() {
         selectFlag = !selectFlag;
+        document.getElementById("selectflag").hidden = !selectFlag;
     });
 
     canvas.addEventListener("wheel", function (e) {
