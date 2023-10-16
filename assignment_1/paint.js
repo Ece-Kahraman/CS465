@@ -358,18 +358,75 @@ window.onload = function init() {
 
     window.addEventListener("keydown", function (e) {
         if (!selectFlag) return;
-        var deltaX = 0, deltaY = 0;
 
         switch (e.key) {
             case "ArrowUp":
-                deltaY--;
+                for (var col = selectStart[0]; col <= selectEnd[0]; col++) {
+                    for (var row = selectStart[1]; row <= selectEnd[1]; row++) {
+                        for (let tri = 0; tri < 4; tri++) {
+
+                            if( row < 1 ) return;
+                         
+                            triangles_list[3][col][row-1][tri] = triangles_list[3][col][row][tri];
+                            triangles_list[layer][col][row-1][tri] = triangles_list[layer][col][row][tri];
+
+                            if(row == selectEnd[1] ){
+                                triangles_list[3][col][row-1][tri] = 0;
+                                triangles_list[layer][col][row-1][tri] = -1   ;
+                            }
+                            
+                        }
+                    }
+                }
+
+                selectEnd[1]--;
+                selectStart[1]--;
+
                 break;
             case "ArrowDown":
-                deltaY++;
+                for (var col = selectStart[0]; col <= selectEnd[0]; col++) {
+                    for (var row = selectEnd[1]; row >= selectStart[1]; row--) {
+                        for (let tri = 0; tri < 4; tri++) {
+
+                            if(row >= 29) return;
+                            
+                            triangles_list[3][col][row+1][tri] = triangles_list[3][col][row][tri];
+                            triangles_list[layer][col][row+1][tri] = triangles_list[layer][col][row][tri];
+
+                            if(row == selectStart[1] ){
+                                triangles_list[3][col][row][tri] = 0;
+                                triangles_list[layer][col][row][tri] = -1   ;
+                            }
+                            
+                        }
+                    }
+                }
+
+                selectEnd[1]++;
+                selectStart[1]++;
                 break;
             case "ArrowLeft":
-                deltaX--;
+                
+                for (var col = selectStart[0]; col <= selectEnd[0]; col++) {
+                    for (var row = selectStart[1]; row < selectEnd[1]; row++) {
+                        for (let tri = 0; tri < 4; tri++) {
 
+                            if( col < 1 ) return;
+                            
+                            triangles_list[3][col - 1][row][tri] = triangles_list[3][col][row][tri];
+                            triangles_list[layer][col - 1][row][tri] = triangles_list[layer][col][row][tri];
+
+                            if(col == selectEnd[0] ){
+                                triangles_list[3][col-1][row][tri] = 0;
+                                triangles_list[layer][col-1][row][tri] = -1   ;
+                            }
+                            
+                        }
+                    }
+                }
+
+                selectEnd[0]--;
+                selectStart[0]--;
                 
                 break;
             case "ArrowRight":                              
@@ -378,14 +435,14 @@ window.onload = function init() {
                     for (var row = selectStart[1]; row < selectEnd[1]; row++) {
                         for (let tri = 0; tri < 4; tri++) {
 
-                            if( col < 1 || col >= 29 || row < 1 || row >= 29) return;
+                            if( col >= 29 ) return;
                             
                             triangles_list[3][col + 1][row][tri] = triangles_list[3][col][row][tri];
                             triangles_list[layer][col + 1][row][tri] = triangles_list[layer][col][row][tri];
 
                             if(col == selectStart[0] ){
-                                triangles_list[3][col][row][tri] = 0;
-                                triangles_list[layer][col][row][tri] = -1   ;
+                                triangles_list[3][col+1][row][tri] = 0;
+                                triangles_list[layer][col+1][row][tri] = -1   ;
                             }
                             
                         }
