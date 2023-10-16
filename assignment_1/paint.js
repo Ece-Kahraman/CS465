@@ -175,20 +175,28 @@ window.onload = function init() {
         document.getElementById("selectflag").hidden = !selectFlag;
     });
 
-    selectReset.addEventListener("click", function() {
-        selectFlag = false;
+    function resetSelect(newSelection) {
+      selectFlag = newSelection === "new" ? selectFlag : false;
+      document.getElementById("selectflag").hidden = !selectFlag;
 
-        for (let col = 0; col < 30; col++) {
-            for (let row = 0; row < 30; row++) {
-                for (let tri = 0; tri < 4; tri++) {
-                    triangles_list[3][col][row][tri] = 0
-                    var i = tri + row * 4 + col * 120;
-                    drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 
-                        triangles_list[3][col][row][tri] );
-                }
-            }
+      for (let col = 0; col < 30; col++) {
+        for (let row = 0; row < 30; row++) {
+          for (let tri = 0; tri < 4; tri++) {
+            triangles_list[3][col][row][tri] = 0;
+            var i = tri + row * 4 + col * 120;
+            drawTriangle(
+              determineTopLayerColor(i),
+              i,
+              vBuffer,
+              cBuffer,
+              triangles_list[3][col][row][tri]
+            );
+          }
         }
-    });
+      }
+    }
+
+    selectReset.addEventListener("click", resetSelect);
 
     canvas.addEventListener("wheel", function (e) {
         var direction = e.deltaY > 0 ? -1 : 1;
@@ -208,7 +216,7 @@ window.onload = function init() {
 
         if (selectFlag) {
             selectStart = [square.column, square.row, triangle];
-            console.log(selectStart);
+
         } else {
             switch (e.button) {
                 case 0: //sol
@@ -237,8 +245,13 @@ window.onload = function init() {
     canvas.addEventListener("mouseup", function (e) {
         if (selectFlag) { 
             selectEnd = [square.column, square.row, triangle];
-            console.log(selectEnd);
+            
+            if (selectStart[0] > selectEnd[0])
+                [selectStart[0], selectEnd[0]] = [selectEnd[0], selectStart[0]];
+            if (selectStart[1] > selectEnd[1])
+                [selectStart[1], selectEnd[1]] = [selectEnd[1], selectStart[1]];
 
+            resetSelect("new");
             for (let col = selectStart[0]; col < selectEnd[0]; col++) {
                 for (let row = selectStart[1]; row < selectEnd[1]; row++) {
                     for (let tri = 0; tri < 4; tri++) {
