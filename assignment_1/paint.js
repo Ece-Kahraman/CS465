@@ -3,6 +3,7 @@ var points;
 var canvas;
 var undoButton;
 var redoButton;
+var selection, selectReset;
 var selectFlag = false;
 var selectStart = [], selectEnd = [];
 var program;
@@ -77,6 +78,7 @@ window.onload = function init() {
     erase_mode = document.getElementById("erase-mode");
     color_menu = document.getElementById("color-menu");
     selection = document.getElementById("select");
+    selectReset = document.getElementById("selectreset");
 
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) { alert("WebGL isn't available"); }
@@ -170,6 +172,21 @@ window.onload = function init() {
 
     selection.addEventListener("click", function() {
         selectFlag = !selectFlag;
+    });
+
+    selectReset.addEventListener("click", function() {
+        selectFlag = false;
+
+        for (let col = 0; col < 30; col++) {
+            for (let row = 0; row < 30; row++) {
+                for (let tri = 0; tri < 4; tri++) {
+                    triangles_list[3][col][row][tri] = 0
+                    var i = tri + row * 4 + col * 120;
+                    drawTriangle(determineTopLayerColor(i), i, vBuffer, cBuffer, 
+                        triangles_list[3][col][row][tri] );
+                }
+            }
+        }
     });
 
     canvas.addEventListener("wheel", function (e) {
