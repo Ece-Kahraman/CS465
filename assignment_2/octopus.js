@@ -1,6 +1,19 @@
 
 var gl;
-var points;
+var margin = 0.03;
+
+var rotateX = 0;
+
+var points = [];
+var colors = [];
+
+var head = {
+    center: vec4(0, 0, 0, 1),
+    size: [0.25, 0.375, 0.25]
+}
+
+
+
 
 
 
@@ -9,14 +22,19 @@ window.onload = function init()
     var canvas = document.getElementById( "gl-canvas" );
     
     gl = WebGLUtils.setupWebGL( canvas );
-    if ( !gl ) { alert( "WebGL isn't available" ); }
+    if ( !gl ) alert( "WebGL isn't available" );
 
+    rotateX = document.getElementById("slider1").value;
+    //console.log(rotateX);
+
+    //var head_vertices = calculateHeadVertices(0,0,0);
     
-    // Four Vertices
-    
-    var node1 = createNode( 0, [], [vec2(0,  -.5), vec2(0, -.4), vec2(-.5, -.5), vec2(-.5, -.4)], 0, 0);
-    console.log( node1 );
-    node1.children.push(createNode(node1, [], [vec2( .1,  -.5 ), vec2( .1, -.4 ), vec2( .6, -.5), vec2( .6, -.4)], 0, 0));
+    quad( 0, 1, 0, 3, 2 );
+    quad( 0, 2, 3, 7, 6 );
+    quad( 0, 3, 0, 4, 7 );
+    quad( 0, 6, 5, 1, 2 );
+    quad( 0, 4, 5, 6, 7 );
+    quad( 0, 5, 4, 0, 1 );
 
     //
     //  Configure WebGL
@@ -31,57 +49,103 @@ window.onload = function init()
     
     // Load the data into the GPU
     
-    var bufferId = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
+    var cBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
 
-    var anan = [];
-    anan = traverse(node1, anan);
-    console.log(anan);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(anan), gl.STATIC_DRAW);
+    var vColor = gl.getAttribLocation( program, "vColor" );
+    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
 
-    // Associate out shader variables with our data buffer
+    var vBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
     
+
     var vPosition = gl.getAttribLocation( program, "vPosition" );
-    gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
-    render(anan.length);
+    render();
 };
 
 
-function render(vertex_count) {
-    gl.clear( gl.COLOR_BUFFER_BIT );
+function render() {
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
     
-    console.log(gl.getBufferParameter(gl.ARRAY_BUFFER, gl.BUFFER_SIZE));
-    for (let index = 0; index < vertex_count; index+=4) {
-      gl.drawArrays( gl.TRIANGLE_STRIP, index, 4 );
+    //gl.uniform3fv(rotateX, theta);
+
+    gl.drawArrays( gl.TRIANGLES, 0, 36 );
+
+    requestAnimFrame( render );
+    
+}
+
+function calculateHeadVertices( translation, rotation, scale ) {
+
+    results = [];
+
+    for (let i = -1; i <= 1; i+=2) {
+        for (let j = -1; j <= 1; j+=2) {
+            for (let k = -1; k <= 1; k+=2) {
+        
+                results.push( vec4(head.size[0]*i, head.size[1]*j, head.size[2]*k, 1) );
+
+            }
+        
+        }
+        
     }
+
+    return results;
+
+}
+
+function quad(part_flag, a, b, c, d) 
+{
+
+    var vertices = part_flag ? [
+        vec4( -0.025, -0.1,  0.025, 1.0 ),
+        vec4( -0.025,  0.1,  0.025, 1.0 ),
+        vec4(  0.025,  0.1,  0.025, 1.0 ),
+        vec4(  0.025, -0.1,  0.025, 1.0 ),
+        vec4( -0.025, -0.1, -0.025, 1.0 ),
+        vec4( -0.025,  0.1, -0.025, 1.0 ),
+        vec4(  0.025,  0.1, -0.025, 1.0 ),
+        vec4(  0.025, -0.1, -0.025, 1.0 )
+    ] :
+    [
+        vec4( -0.25, -0.375,  0.25, 1.0 ),
+        vec4( -0.25,  0.375,  0.25, 1.0 ),
+        vec4(  0.25,  0.375,  0.25, 1.0 ),
+        vec4(  0.25, -0.375,  0.25, 1.0 ),
+        vec4( -0.25, -0.375, -0.25, 1.0 ),
+        vec4( -0.25,  0.375, -0.25, 1.0 ),
+        vec4(  0.25,  0.375, -0.25, 1.0 ),
+        vec4(  0.25, -0.375, -0.25, 1.0 )
+    ];
+
+    var vertexColors = [
+        [ 0.0, 0.0, 0.0, 1.0 ],  // black
+        [ 1.0, 0.0, 0.0, 1.0 ],  // red
+        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+        [ 0.0, 1.0, 0.0, 1.0 ],  // green
+        [ 0.0, 0.0, 1.0, 1.0 ],  // blue
+        [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
+        [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
+        [ 1.0, 1.0, 1.0, 1.0 ]   // white
+    ];
     
+    var indices = [ a, b, c, a, c, d ];
+
+    for ( var i = 0; i < indices.length; ++i ) {
+        points.push( vertices[indices[i]] );
+        //colors.push( vertexColors[indices[i]] );
+    
+        // for solid colored faces use 
+        colors.push(vertexColors[a]);
+        
+    }
 }
 
 
-// DONT FORGET TO CONVERT COORDINATES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-function createNode(parent, children, vertices, joints, color) {
-  return {
-    parent: parent,
-    children: children,
-    vertices: vertices,
-    joints: joints,
-    color: color
-  };
-}
-
-function traverse( root, array ){
-  
-  array = array.concat(root.vertices);
-  
-  
-  if( root.children.length == 0 ){
-    return array;
-  }
-  root.children.forEach(child => {
-    array = traverse(child, array);
-  });
-  
-  return array;
-}
