@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute  vec4 vPosition;
+    //attribute  vec4 vColor;
+    //varying vec4 fColor;
+    
+    // uniform mat4 r; // trackball_octopus.js
+
+    uniform mat4 modelViewMatrix; // octopus.js + one_leg_octopus.js
+    uniform mat4 projectionMatrix; // octopus.js + one_leg_octopus.js
+    
+    void main() 
+    {
+        //vec4 p; // trackball_octopus.js
+
+        //fColor = vColor;
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition; // octopus.js + one_leg_octopus.js
+        // gl_Position = r * vPosition; // trackball_octopus.js
+    } 
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+   
+    //varying vec4 fColor;
+    
+    void main()
+    {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+</script>
+
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="octopus.js"></script>
+
+
+</head>
+
+<body style="display: flex;">
+<canvas id="gl-canvas" width="512" height="512">
+Oops ... your browser doesn't support the HTML5 canvas element
+</canvas>
+
+<div class="accordion" id="sliderAccordion">
+    <div class="accordion-item" id="PartAccordion" hidden>
+      <h2 class="accordion-header" id="headingPart">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePart" aria-expanded="true" aria-controls="collapsePart">
+          Part Controls
+        </button>
+      </h2>
+      <div id="collapsePart" class="accordion-collapse collapse show" aria-labelledby="headingPart" data-bs-parent="#sliderAccordion">
+        <div class="accordion-body">
+            <div id="PartOffsetType0">
+                X: -180 <input id="slide" type="range" min="-180" max="180" step="1" value="0" /> 180
+            </div><br/>
+            <div id="PartOffsetType1">
+                Y: -180 <input id="slide" type="range" min="-180" max="180" step="1" value="0"/> 180
+            </div><br/>                    
+            <div id="PartOffsetType2">
+                Z: -180 <input id="slide" type="range" min="-180" max="180" step="1" value="0"/> 180
+            </div><br/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--input id="slider1" type="range" min="-180" max="180" step=".5" value="0"/>
+<input id="slider2" type="range" min="-180" max="180" step=".5" value="0"/>
+<input id="slider3" type="range" min="-90" max="90" step="5" value="0"/-->
+    
+<!--div id="slider10">
+    upper arm x-axis -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+</div><br/>
+<div id="slider11">
+    upper arm y-axis -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+</div><br/>
+<div id="slider12">
+    upper arm z-axis -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+</div><br/>
+    <div id="slider5">
+    right lower arm angle -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+    </div><br/>
+    <div id="slider6">
+    left upper leg angle -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+    </div><br/>
+    <div id="slider7">
+    left lower leg angle -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+    </div><br/>
+    <div id="slider8">
+    right upper leg angle -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+    </div><br/>
+    
+    <div id="slider9">
+    right lower leg angle -180 <input id="slide" type="range"
+     min="-180" max="180" step="10" value="0"
+      />
+     180
+    </div><br/-->
+
+
+</body>
+</html>

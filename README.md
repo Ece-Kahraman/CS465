@@ -6,4 +6,7 @@ Completed by:
   Ece Kahraman
 
 ## Assignment 1
-  2D Paint Application with Triangles
+  2D Paint Application with Triangles: 90/100
+
+## Assignment 2
+  Modeling and Animating A 3D Octopus Using WebGL
