@@ -289,13 +289,19 @@ window.onload = function init() {
     var types =  ["Rotate", "Move"];
     var axises = ["X", "Y", "Z"];
 
-    var accordions = document.getElementById("sliderAccordion");
-    var exampleAccordion = accordions.children[0];
-    exampleAccordion.hidden = false;
+    //var accordions = document.getElementById("sliderAccordion");
+    //var exampleAccordion = accordions.children[0];
+    //exampleAccordion.hidden = false;
     
     for (var part in parts) {
 
-        var newAccordion = exampleAccordion.cloneNode(true);
+        /*var newAccordion = exampleAccordion.cloneNode(true);
+
+        if (parts[part] == "Head") {
+            for (var pi = 1; pi < 8; ++pi)
+                newAccordion.children[1].children[0].children.removeChild(pi);
+        }
+
         newAccordion.id = parts[part] + "Accordion";
 
         newAccordion.children[0].id = "heading" + parts[part];
@@ -308,70 +314,509 @@ window.onload = function init() {
         newAccordion.children[1].id = "collapse" + parts[part];
         newAccordion.children[1].setAttribute("aria-labelledby", "heading" + parts[part]);
 
-        
+        var i = 0;*/
         for (var partOffset in (parts[part] == "Head" ? [partOffsets[0]] : partOffsets)) {
-            var accordionBody = newAccordion.children[1].children[0];
-            accordionBody
             for (var type in (parts[part] == "Head" ? types : [types[0]])) {
                 for (var axis in axises) {
                     accordionIds.push(parts[part] + partOffsets[partOffset] + types[type] + axises[axis]);
                 }
-            }
+            }/*
+
+            var moveSlider0 = newAccordion.children[1].children[0].children[0].cloneNode(true);
+            var moveSlider1 = newAccordion.children[1].children[0].children[2].cloneNode(true);
+            var moveSlider2 = newAccordion.children[1].children[0].children[4].cloneNode(true);
+            
+            newAccordion.children[1].children[0].children[0].id = accordionIds[i];
+            newAccordion.children[1].children[0].children[0].children[0].id = accordionIds[i++];
+            newAccordion.children[1].children[0].children[2].id = accordionIds[i];
+            newAccordion.children[1].children[0].children[2].children[0].id = accordionIds[i++];
+            newAccordion.children[1].children[0].children[4].id = accordionIds[i];
+            newAccordion.children[1].children[0].children[4].children[0].id = accordionIds[i++];
+
+            if (parts[part] == "Head") {
+                var headAccordion = newAccordion.cloneNode(true);
+                moveSlider0.id = accordionIds[i];
+                moveSlider0.children[0].id = accordionIds[i++];
+                headAccordion.children[1].children[0].appendChild(moveSlider0);
+                moveSlider1.id = accordionIds[i];
+                moveSlider1.children[0].id = accordionIds[i++];
+                headAccordion.children[1].children[0].appendChild(moveSlider1);
+                moveSlider2.id = accordionIds[i];
+                moveSlider2.children[0].id = accordionIds[i++];
+                headAccordion.children[1].children[0].appendChild(moveSlider2);
+            }*/
         }
+        //accordions.appendChild(parts[part] == "Head" ? headAccordion : newAccordion);
     }
+    //exampleAccordion.hidden = true;
+    //console.log(accordionIds);
     
-    document.getElementById("sliderHead0").onchange = function(event) {
+    
+    document.getElementById("Head0RotateX").onchange = function(event) {
         theta[0][0] = event.target.value;
         initNodes(0);
     };
 
-    document.getElementById("slider01").onchange = function(event) {
-        theta[0][1] = event.target.value;
+    
+    document.getElementById("Head0RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
         initNodes(0);
     };
 
-    document.getElementById("slider02").onchange = function(event) {
-        theta[0][2] = event.target.value;
+    
+    document.getElementById("Head0RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
         initNodes(0);
     };
+
     
-    document.getElementById("slider10").onchange = function(event) {
-         theta[1][0] =  event.target.value;
-         initNodes(1);
+    /*document.getElementById("Head0MoveX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
-     
-    document.getElementById("slider11").onchange = function(event) {
-        theta[1][1] = event.target.value;
-        initNodes(1);
-    };
-    document.getElementById("slider12").onchange = function(event) {
-         theta[1][2] =  event.target.value;
-         initNodes(1);
-    };
+
     
-    document.getElementById("slider20").onchange = function(event) {
-        theta[2][0] = event.target.value;
-        initNodes(2);
+    document.getElementById("Head0MoveY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
-    document.getElementById("slider21").onchange = function(event) {
-        theta[2][1] = event.target.value;
-         initNodes(2);
+
+    
+    document.getElementById("Head0MoveZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };*/
+
+    
+    document.getElementById("Uparm0RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
-    document.getElementById("slider22").onchange = function(event) {
-        theta[2][2] =  event.target.value;
-         initNodes(2);
+
+    
+    document.getElementById("Uparm0RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
-    document.getElementById("slider30").onchange = function(event) {
-        theta[3][0] = event.target.value;
-        initNodes(3);
+
+    
+    document.getElementById("Uparm0RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
-    document.getElementById("slider31").onchange = function(event) {
-        theta[3][1] = event.target.value;
-         initNodes(3);
+
+    
+    document.getElementById("Uparm1RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
-    document.getElementById("slider32").onchange = function(event) {
-        theta[3][2] =  event.target.value;
-         initNodes(3);
+
+    
+    document.getElementById("Uparm1RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm1RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm2RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm2RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm2RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm3RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm3RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm3RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm4RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm4RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm4RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm5RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm5RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm5RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm6RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm6RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm6RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm7RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm7RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Uparm7RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm0RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm0RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm0RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm1RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm1RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm1RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm2RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm2RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm2RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm3RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm3RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm3RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm4RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm4RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm4RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm5RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm5RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm5RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm6RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm6RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm6RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm7RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm7RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Midarm7RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm0RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm0RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm0RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm1RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm1RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm1RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm2RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm2RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm2RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm3RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm3RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm3RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm4RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm4RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm4RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm5RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm5RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm5RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm6RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm6RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm6RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm7RotateX").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm7RotateY").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
+    };
+
+    
+    document.getElementById("Lowarm7RotateZ").onchange = function(event) {
+        theta[0][0] = event.target.value;
+        initNodes(0);
     };
 
     /*
