@@ -52,6 +52,8 @@ var lowerLegDepth = 1 * USF;
 var playFrames = false;
 var playIndex;
 var playAnim0 = false;
+var playAnim1 = false;
+var playAnim2 = false;
 
 var numNodes = 25;
 
@@ -79,17 +81,19 @@ var numVertices = 24;
 var stack = [];
 var figure = [];
 var frames = [];
-var animations = [];
-animations.push([JSON.parse(JSON.stringify(theta))]);
-animations[0][0][0][2] = 1;
+var animation0 = [];
+var animation1 = [];
+var animation2 = [];
+animation0 = [JSON.parse(JSON.stringify(theta))];
+animation0[0][0][2] = 1;
 
 
 for (var t = -180; t < 180; ++t){
-    animations[0].push(JSON.parse(JSON.stringify(theta)))
-    for (var f = 0; f < animations[0].length; f++)
+    animation0.push(JSON.parse(JSON.stringify(theta)))
+    for (var f = 0; f < animation0.length; f++)
         for (var p = 0; p < numNodes; p++)
             for (var d = 0; d < 3; d++)
-                animations[0][f][p][d] = Math.random() * 360 - 180;
+            animation0[f][p][d] = Math.random() * 360 - 180;
 }
 
 for( var i=0; i<numNodes; i++) figure[i] = createNode(null, null);
@@ -332,8 +336,8 @@ window.onload = function init() {
     
 
     document.getElementById("reset-squidward").onclick = function() {
+        alpha = [0,0,0];
         for(i=0; i<numNodes; i++){
-            alpha = [0,0,0];
             theta[i] = JSON.parse(JSON.stringify(_theta[i])); 
             initNodes(i);
         }
@@ -352,9 +356,15 @@ window.onload = function init() {
         if (frames.length == 0 ) frames.push($.extend(true, [], theta));
         else {
             if ( frames[ frames.length - 1 ] === theta ) window.alert("change the frame pls");
-            else frames.push($.extend(true, [], theta));
+            else {
+                var newFrames = $.extend(true, [], interpolation(frames[frames.length - 1], theta, 50));
+                while (newFrames.length)
+                    frames.push(newFrames.shift());
+            }
+
         }
     };
+
     document.getElementById("play-frames").onclick = function() {
 
         playFrames = true;
@@ -912,20 +922,24 @@ window.onload = function init() {
     render();
 }
 
-function interpolate(frame1, frame2, subframeCount) {
+function interpolation(frame1, frame2, subframeCount) {
     var newFrames = [];
+    console.table(frame1);
+    console.table(frame2);
 
-    var i = 1;
     while (newFrames.length < subframeCount) {
-        newFrames.push(JSON.parse(JSON.stringify(frame1)));
+        if (newFrames.length) newFrames.push(JSON.parse(JSON.stringify(newFrames[newFrames.length - 1])));
+        else newFrames.push(JSON.parse(JSON.stringify(frame1)));
         for (var part = 0; part < frame1.length; ++part) {
             for (var dim = 0; dim < frame1[part].length; ++dim) {
                 var diff = (frame2[part][dim] - frame1[part][dim]) / subframeCount;
-                newFrames[newFrames.length - 1][part][dim] += Number(diff) * i;
+                newFrames[newFrames.length - 1][part][dim] += Number(diff);
             }
         }
         ++i;
     }
+
+    newFrames.shift();
 
     return newFrames;
 }
@@ -955,12 +969,34 @@ var render = function() {
     }
     else if(playAnim0){
         for(i=0; i<numNodes; i++){
-            theta[i] = JSON.parse(JSON.stringify(animations[0][playIndex][i])); 
+            theta[i] = JSON.parse(JSON.stringify(animation0[playIndex][i])); 
             initNodes(i);
         }
         playIndex++;
-        if(playIndex == animations[0].length){
+        if(playIndex == animation0.length){
             playAnim0 = false;
+            playIndex = 0;
+        }
+    }
+    else if(playAnim1){
+        for(i=0; i<numNodes; i++){
+            theta[i] = JSON.parse(JSON.stringify(animation1[playIndex][i])); 
+            initNodes(i);
+        }
+        playIndex++;
+        if(playIndex == animation1.length){
+            playAnim1 = false;
+            playIndex = 0;
+        }
+    }
+    else if(playAnim2){
+        for(i=0; i<numNodes; i++){
+            theta[i] = JSON.parse(JSON.stringify(animation2[playIndex][i])); 
+            initNodes(i);
+        }
+        playIndex++;
+        if(playIndex == animation2.length){
+            playAnim2 = false;
             playIndex = 0;
         }
     }
