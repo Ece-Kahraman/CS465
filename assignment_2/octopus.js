@@ -21,11 +21,11 @@ var vertices = [
     vec4( 0.5, -0.5, -0.5, 1.0 )
 ];
 
-var USF = 0.3; // Universal Scale Factor
+var USF = 0.7; // Universal Scale Factor
 
-var headHeight = 5 * USF;
-var headWidth = 3 * USF;
-var headDepth = 3 * USF;
+var headHeight = 10 * USF;
+var headWidth = 8 * USF;
+var headDepth = 8 * USF;
 
 var upperLegHeight = 4 * USF;
 var upperLegWidth = 1 * USF;
@@ -76,31 +76,30 @@ function scale4(a, b, c) {
 //--------------------------------------------
 
 function createNode(transform, render){
-    var node = {
+    return {
     transform: transform,
     render: render
-    }
-    return node;
+    };
 }
 
 function idToLocation(Id) {
     switch (Math.floor((Id-1)/3)){
         case 0:
-            return {x: -1.5 * USF * USF, z: 1.5 * USF};        
+            return {x: -3 * USF, z: 3 * USF};        
         case 1:
-            return {x: -1.5 * USF, z: 0 * USF};
+            return {x: -3 * USF, z: 0 * USF};
         case 2:
-            return {x: -1.5 * USF, z: -1.5 * USF};
+            return {x: -3 * USF, z: -3 * USF};
         case 3:
-            return {x: 0, z: 1.5 * USF};
+            return {x: 0, z: 3 * USF};
         case 4:
-            return {x: 0, z: -1.5 * USF};
+            return {x: 0, z: -3 * USF};
         case 5:
-            return {x: 1.5 * USF, z: 1.5 * USF};
+            return {x: 3 * USF, z: 3 * USF};
         case 6:
-            return {x: 1.5 * USF, z: 0 * USF};
+            return {x: 3 * USF, z: 0 * USF};
         case 7:
-            return {x: 1.5 * USF, z: -1.5 * USF}
+            return {x: 3 * USF, z: -3 * USF}
         
     }
 }
@@ -111,11 +110,9 @@ function initNodes(Id) {
 
     // Head
     if (Id == 0) {
-        m = translate(0.0, -0.5*headHeight, 0.0);
 	    m = mult(rotate(theta[0][0], 1, 0, 0), m);
 	    m = mult(rotate(theta[0][1], 0, 1, 0), m);
         m = mult(rotate(theta[0][2], 0, 0, 1), m);
-        m = mult(translate(0.0, 0.5*headHeight, 0.0), m);
         figure[Id] = createNode( m, body_part);
         return;
     }
@@ -125,32 +122,36 @@ function initNodes(Id) {
     switch(Id % 3) {
 
         // Upper Arm
-        case 1:    
-            m = translate(-tmp.x, 0.5*(headHeight+upperLegHeight), -tmp.z);
-            m = mult(m, rotate(theta[1][0], 1, 0, 0));
-            m = mult(m, rotate(theta[1][1], 0, 1, 0));
-            m = mult(m, rotate(theta[1][2], 0, 0, 1));
-            m = mult(translate(tmp.x, -0.5*(headHeight+upperLegHeight), tmp.z), m);
+        case 1:
+            m = translate(tmp.x, 0, tmp.z);
+            m = mult(m, rotate(theta[Id][0], 1, 0, 0));
+            m = mult(m, rotate(theta[Id][1], 0, 1, 0));
+            m = mult(m, rotate(theta[Id][2], 0, 0, 1));
+            m = mult(m, translate(0, -upperLegHeight, 0));
             figure[Id] = createNode( m, body_part);
-            break;
+            return;
 
         // Middle Arm
-        case 2:    
-            m = translate(-tmp.x, -0.5*(headHeight+upperLegHeight+middleLegHeight), tmp.z);
-            m = mult(m, rotate(1, 1, 0, 0));
+        case 2:
+            m = mult(m, rotate(theta[Id][0], 1, 0, 0));
+            m = mult(m, rotate(theta[Id][1], 0, 1, 0));
+            m = mult(m, rotate(theta[Id][2], 0, 0, 1));
+            m = mult(m, translate(0, -middleLegHeight, 0));
             figure[Id] = createNode( m, body_part);
-            break;
+            return;
 
         // Lower Arm
-        case 0:    
-            m = translate(-tmp.x, -0.3*(headHeight+upperLegHeight+middleLegHeight+lowerLegHeight), tmp.z);
-            m = mult(m, rotate(1, 1, 0, 0));
+        case 0:
+            m = mult(m, rotate(theta[Id][0], 1, 0, 0));
+            m = mult(m, rotate(theta[Id][1], 0, 1, 0));
+            m = mult(m, rotate(theta[Id][2], 0, 0, 1));
+            m = mult(m, translate(0, -lowerLegHeight, 0));
             figure[Id] = createNode( m, body_part);
-            break;
+            return;
        
         default:
             //no
-            break;
+            return;
     }
 
 }
@@ -158,22 +159,18 @@ function initNodes(Id) {
 
 function traverse(Id) {
 
-    if (modelViewMatrix == undefined) modelViewMatrix = mat4();
-
-    //console.log(" === ID%s", Id);
-    //console.table(modelViewMatrix);
-    //console.table(stack);
-    //console.table(figure[Id].transform);    
+    if (modelViewMatrix == undefined) modelViewMatrix = mat4();   
  
-    
     if ( Id == null ) return;
+
     if ( Id == 0 ){
         stack.push(modelViewMatrix);
         modelViewMatrix = mult(modelViewMatrix, figure[Id].transform);
         figure[Id].render(Id);
         for ( let i = 1; i < 23; i += 3) traverse(i);
+        //return;
     }
-    if ( Id % 3 == 1){
+    if ( Id % 3 == 1) {
         stack.push(modelViewMatrix);
         modelViewMatrix = mult(modelViewMatrix, figure[Id].transform);
         figure[Id].render(Id);
@@ -186,9 +183,10 @@ function traverse(Id) {
         traverse((Id+1));
 
     } else {
-        //stack.push(modelViewMatrix);
-        modelViewMatrix = mult(modelViewMatrix, figure[Id].transform);
-        figure[Id].render(Id);
+        if(Id != 0){
+            modelViewMatrix = mult(modelViewMatrix, figure[Id].transform);
+            figure[Id].render(Id);
+        }        
         stack.pop();
         modelViewMatrix = stack.pop();
     }
@@ -283,9 +281,46 @@ window.onload = function init() {
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
+
+    var accordionIds = [];
+
+    var parts = ["Head", "Uparm", "Midarm", "Lowarm"];
+    var partOffsets = ["0", "1", "2", "3", "4", "5", "6", "7"];
+    var types =  ["Rotate", "Move"];
+    var axises = ["X", "Y", "Z"];
+
+    var accordions = document.getElementById("sliderAccordion");
+    var exampleAccordion = accordions.children[0];
+    exampleAccordion.hidden = false;
     
+    for (var part in parts) {
+
+        var newAccordion = exampleAccordion.cloneNode(true);
+        newAccordion.id = parts[part] + "Accordion";
+
+        newAccordion.children[0].id = "heading" + parts[part];
+
+        newAccordion.children[0].children[0].setAttribute("data-bs-target", "#collapse" + parts[part]);
+        newAccordion.children[0].children[0].setAttribute("data-bs-target", "#collapse" + parts[part]);
+        newAccordion.children[0].children[0].setAttribute("aria-controls", "collapse" + parts[part]);
+        newAccordion.children[0].children[0].innerText = parts[part] + " Controls";
+        
+        newAccordion.children[1].id = "collapse" + parts[part];
+        newAccordion.children[1].setAttribute("aria-labelledby", "heading" + parts[part]);
+
+        
+        for (var partOffset in (parts[part] == "Head" ? [partOffsets[0]] : partOffsets)) {
+            var accordionBody = newAccordion.children[1].children[0];
+            accordionBody
+            for (var type in (parts[part] == "Head" ? types : [types[0]])) {
+                for (var axis in axises) {
+                    accordionIds.push(parts[part] + partOffsets[partOffset] + types[type] + axises[axis]);
+                }
+            }
+        }
+    }
     
-    document.getElementById("slider00").onchange = function(event) {
+    document.getElementById("sliderHead0").onchange = function(event) {
         theta[0][0] = event.target.value;
         initNodes(0);
     };
@@ -313,19 +348,33 @@ window.onload = function init() {
          theta[1][2] =  event.target.value;
          initNodes(1);
     };
+    
+    document.getElementById("slider20").onchange = function(event) {
+        theta[2][0] = event.target.value;
+        initNodes(2);
+    };
+    document.getElementById("slider21").onchange = function(event) {
+        theta[2][1] = event.target.value;
+         initNodes(2);
+    };
+    document.getElementById("slider22").onchange = function(event) {
+        theta[2][2] =  event.target.value;
+         initNodes(2);
+    };
+    document.getElementById("slider30").onchange = function(event) {
+        theta[3][0] = event.target.value;
+        initNodes(3);
+    };
+    document.getElementById("slider31").onchange = function(event) {
+        theta[3][1] = event.target.value;
+         initNodes(3);
+    };
+    document.getElementById("slider32").onchange = function(event) {
+        theta[3][2] =  event.target.value;
+         initNodes(3);
+    };
+
     /*
-    document.getElementById("slider6").onchange = function() {
-        theta[leftUpperLegId] = event.srcElement.value;
-        initNodes(leftUpperLegId);
-    };
-    document.getElementById("slider7").onchange = function() {
-         theta[leftLowerLegId] = event.srcElement.value;
-         initNodes(leftLowerLegId);
-    };
-    document.getElementById("slider8").onchange = function() {
-         theta[rightUpperLegId] =  event.srcElement.value;
-         initNodes(rightUpperLegId);
-    };
         document.getElementById("slider9").onchange = function() {
         theta[rightLowerLegId] = event.srcElement.value;
         initNodes(rightLowerLegId);
@@ -336,7 +385,6 @@ window.onload = function init() {
     };*/
 
     for(i=0; i<numNodes; i++) initNodes(i);
-    console.log(figure);
     render();
 }
 
