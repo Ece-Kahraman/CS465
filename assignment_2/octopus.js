@@ -20,6 +20,17 @@ var vertices = [
     vec4( 0.5, -0.5, -0.5, 1.0 )
 ];
 
+var vertexColors = [
+    [ 0.0, 0.0, 0.0, 1.0 ],  // black
+    [ 1.0, 0.0, 0.0, 1.0 ],  // red
+    [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
+    [ 0.0, 1.0, 0.0, 1.0 ],  // green
+    [ 0.0, 0.0, 1.0, 1.0 ],  // blue
+    [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
+    [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
+    [ 1.0, 1.0, 1.0, 1.0 ]   // white
+];
+
 var USF = 0.7; // Universal Scale Factor
 
 var headHeight = 10 * USF;
@@ -80,9 +91,6 @@ for (var t = -180; t < 180; ++t){
             for (var d = 0; d < 3; d++)
                 animations[0][f][p][d] = Math.random() * 360 - 180;
 }
- 
-
-
 
 for( var i=0; i<numNodes; i++) figure[i] = createNode(null, null);
 
@@ -90,6 +98,7 @@ var vBuffer;
 var modelViewLoc;
 
 var pointsArray = [];
+var colorsArray = [];
 
 //-------------------------------------------
 
@@ -255,10 +264,14 @@ function body_part(Id) {
 }
 
 function quad(a, b, c, d) {
-    pointsArray.push(vertices[a]); 
+    pointsArray.push(vertices[a]);
+    colorsArray.push(vertexColors[a]); 
     pointsArray.push(vertices[b]); 
-    pointsArray.push(vertices[c]);     
-    pointsArray.push(vertices[d]);    
+    colorsArray.push(vertexColors[a]);
+    pointsArray.push(vertices[c]); 
+    colorsArray.push(vertexColors[a]);    
+    pointsArray.push(vertices[d]);
+    colorsArray.push(vertexColors[a]);    
 }
 
 function cube()
@@ -301,14 +314,21 @@ window.onload = function init() {
     
     cube();
         
-    vBuffer = gl.createBuffer();
-        
+    vBuffer = gl.createBuffer();        
     gl.bindBuffer( gl.ARRAY_BUFFER, vBuffer );
     gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
     
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
+
+    var cBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colorsArray), gl.STATIC_DRAW );
+
+    var vColor = gl.getAttribLocation( program, "vColor" );
+    gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
     
 
     document.getElementById("reset-squidward").onclick = function() {
@@ -339,6 +359,7 @@ window.onload = function init() {
 
         playFrames = true;
         playIndex = 0;
+        console.table(frames);
 
     };
     document.getElementById("clear-frames").onclick = function() {

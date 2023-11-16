@@ -8,8 +8,8 @@
 
 <script id="vertex-shader" type="x-shader/x-vertex">
     attribute  vec4 vPosition;
-    //attribute  vec4 vColor;
-    //varying vec4 fColor;
+    attribute  vec4 vColor;
+    varying vec4 fColor;
     
     // uniform mat4 r; // trackball_octopus.js
 
@@ -20,7 +20,7 @@
     {
         //vec4 p; // trackball_octopus.js
 
-        //fColor = vColor;
+        fColor = vColor;
         gl_Position = projectionMatrix * modelViewMatrix * vPosition; // octopus.js + one_leg_octopus.js
         // gl_Position = r * vPosition; // trackball_octopus.js
     } 
@@ -29,11 +29,11 @@
 <script id="fragment-shader" type="x-shader/x-fragment">
     precision mediump float;
    
-    //varying vec4 fColor;
+    varying vec4 fColor;
     
     void main()
     {
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        gl_FragColor = fColor;
     }
 </script>
 
@@ -97,7 +97,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
       </h2>
       <div id="collapseUparm" class="accordion-collapse collapse" aria-labelledby="headingUparm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
-            First Arm:
+            1st Arm:
             <div id="_Uparm0RotateX">
                 X: -180 <input id="Uparm0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -107,7 +107,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm0RotateZ">
                 Z: -180 <input id="Uparm0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            2nd Arm:
             <div id="_Uparm1RotateX">
                 X: -180 <input id="Uparm1RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -117,7 +117,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm1RotateZ">
                 Z: -180 <input id="Uparm1RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            3rd Arm:
             <div id="_Uparm2RotateX">
                 X: -180 <input id="Uparm2RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -127,7 +127,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm2RotateZ">
                 Z: -180 <input id="Uparm2RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            4th Arm:
             <div id="_Uparm3RotateX">
                 X: -180 <input id="Uparm3RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -137,7 +137,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm3RotateZ">
                 Z: -180 <input id="Uparm3RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            5th Arm:
             <div id="_Uparm4RotateX">
                 X: -180 <input id="Uparm4RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -147,7 +147,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm4RotateZ">
                 Z: -180 <input id="Uparm4RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            6th Arm:
             <div id="_Uparm5RotateX">
                 X: -180 <input id="Uparm5RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -157,7 +157,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm5RotateZ">
                 Z: -180 <input id="Uparm5RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            7th Arm:
             <div id="_Uparm6RotateX">
                 X: -180 <input id="Uparm6RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -167,7 +167,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Uparm6RotateZ">
                 Z: -180 <input id="Uparm6RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            8th Arm:
             <div id="_Uparm7RotateX">
                 X: -180 <input id="Uparm7RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -188,7 +188,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
       </h2>
       <div id="collapseMidarm" class="accordion-collapse collapse" aria-labelledby="headingMidarm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
-            First Arm:
+            1st Arm:
             <div id="_Midarm0RotateX">
                 X: -180 <input id="Midarm0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -198,7 +198,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm0RotateZ">
                 Z: -180 <input id="Midarm0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            2nd Arm:
             <div id="_Midarm1RotateX">
                 X: -180 <input id="Midarm1RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -208,7 +208,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm1RotateZ">
                 Z: -180 <input id="Midarm1RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            3rd Arm:
             <div id="_Midarm2RotateX">
                 X: -180 <input id="Midarm2RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -218,7 +218,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm2RotateZ">
                 Z: -180 <input id="Midarm2RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            4th Arm:
             <div id="_Midarm3RotateX">
                 X: -180 <input id="Midarm3RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -228,7 +228,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm3RotateZ">
                 Z: -180 <input id="Midarm3RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            5th Arm:
             <div id="_Midarm4RotateX">
                 X: -180 <input id="Midarm4RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -238,7 +238,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm4RotateZ">
                 Z: -180 <input id="Midarm4RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            6th Arm:
             <div id="_Midarm5RotateX">
                 X: -180 <input id="Midarm5RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -248,7 +248,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm5RotateZ">
                 Z: -180 <input id="Midarm5RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            7th Arm:
             <div id="_Midarm6RotateX">
                 X: -180 <input id="Midarm6RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -258,7 +258,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Midarm6RotateZ">
                 Z: -180 <input id="Midarm6RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            8th Arm:
             <div id="_Midarm7RotateX">
                 X: -180 <input id="Midarm7RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -279,7 +279,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
       </h2>
       <div id="collapseLowarm" class="accordion-collapse collapse" aria-labelledby="headingLowarm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
-            First Arm:
+            1st Arm:
             <div id="_Lowarm0RotateX">
                 X: -180 <input id="Lowarm0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -289,7 +289,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm0RotateZ">
                 Z: -180 <input id="Lowarm0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            2nd Arm:
             <div id="_Lowarm1RotateX">
                 X: -180 <input id="Lowarm1RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -299,7 +299,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm1RotateZ">
                 Z: -180 <input id="Lowarm1RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            3rd Arm:
             <div id="_Lowarm2RotateX">
                 X: -180 <input id="Lowarm2RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -309,7 +309,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm2RotateZ">
                 Z: -180 <input id="Lowarm2RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            4th Arm:
             <div id="_Lowarm3RotateX">
                 X: -180 <input id="Lowarm3RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -319,7 +319,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm3RotateZ">
                 Z: -180 <input id="Lowarm3RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            5th Arm:
             <div id="_Lowarm4RotateX">
                 X: -180 <input id="Lowarm4RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -329,7 +329,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm4RotateZ">
                 Z: -180 <input id="Lowarm4RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            6th Arm:
             <div id="_Lowarm5RotateX">
                 X: -180 <input id="Lowarm5RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -339,7 +339,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm5RotateZ">
                 Z: -180 <input id="Lowarm5RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            7th Arm:
             <div id="_Lowarm6RotateX">
                 X: -180 <input id="Lowarm6RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
@@ -349,7 +349,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
             <div id="_Lowarm6RotateZ">
                 Z: -180 <input id="Lowarm6RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
-            First Arm:
+            8th Arm:
             <div id="_Lowarm7RotateX">
                 X: -180 <input id="Lowarm7RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
