@@ -912,6 +912,23 @@ window.onload = function init() {
     render();
 }
 
+function interpolate(frame1, frame2, subframeCount) {
+    var newFrames = [];
+
+    var i = 1;
+    while (newFrames.length < subframeCount) {
+        newFrames.push(JSON.parse(JSON.stringify(frame1)));
+        for (var part = 0; part < frame1.length; ++part) {
+            for (var dim = 0; dim < frame1[part].length; ++dim) {
+                var diff = (frame2[part][dim] - frame1[part][dim]) / subframeCount;
+                newFrames[newFrames.length - 1][part][dim] += Number(diff) * i;
+            }
+        }
+        ++i;
+    }
+
+    return newFrames;
+}
 
 var render = function() {
 
