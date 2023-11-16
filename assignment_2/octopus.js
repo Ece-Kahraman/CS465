@@ -82,8 +82,8 @@ var stack = [];
 var figure = [];
 var frames = [];
 var animation0 = [];
-var animation1 = [];
-var animation2 = [];
+var animation1 = JSON.parse(anim1json);
+var animation2 = JSON.parse(anim2json);
 animation0 = [JSON.parse(JSON.stringify(theta))];
 animation0[0][0][2] = 1;
 
@@ -351,6 +351,31 @@ window.onload = function init() {
         playIndex = 0;
     }
 
+    document.getElementById("anim1").onclick = function() {
+        playAnim1 = true;
+        playIndex = 0;
+    }
+
+    document.getElementById("anim2").onclick = function() {
+        playAnim2 = true;
+        playIndex = 0;
+    }
+
+    document.getElementById("ow-anim0").onclick = function() {
+        if (frames.length == 0 ) return;
+        animation0 = $.extend(true, [], frames);
+    }
+
+    document.getElementById("ow-anim1").onclick = function() {
+        if (frames.length == 0 ) return;
+        animation1 = $.extend(true, [], frames);
+    }
+
+    document.getElementById("ow-anim2").onclick = function() {
+        if (frames.length == 0 ) return;
+        animation2 = $.extend(true, [], frames);
+    }
+
     document.getElementById("save-frame").onclick = function() {
 
         if (frames.length == 0 ) frames.push($.extend(true, [], theta));
@@ -366,10 +391,8 @@ window.onload = function init() {
     };
 
     document.getElementById("play-frames").onclick = function() {
-
         playFrames = true;
         playIndex = 0;
-        console.table(frames);
 
     };
     document.getElementById("clear-frames").onclick = function() {
@@ -924,8 +947,6 @@ window.onload = function init() {
 
 function interpolation(frame1, frame2, subframeCount) {
     var newFrames = [];
-    console.table(frame1);
-    console.table(frame2);
 
     while (newFrames.length < subframeCount) {
         if (newFrames.length) newFrames.push(JSON.parse(JSON.stringify(newFrames[newFrames.length - 1])));
@@ -933,7 +954,7 @@ function interpolation(frame1, frame2, subframeCount) {
         for (var part = 0; part < frame1.length; ++part) {
             for (var dim = 0; dim < frame1[part].length; ++dim) {
                 var diff = (frame2[part][dim] - frame1[part][dim]) / subframeCount;
-                newFrames[newFrames.length - 1][part][dim] += Number(diff);
+                newFrames[newFrames.length - 1][part][dim] = Number(newFrames[newFrames.length - 1][part][dim]) + Number(diff);
             }
         }
         ++i;
@@ -949,7 +970,6 @@ var render = function() {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
     if(playFrames){
-        console.log(playFrames, playIndex);
         if(frames.length <= 0){
             window.alert("You did not save frames!!!");
             playFrames = false;
@@ -968,36 +988,54 @@ var render = function() {
         }  
     }
     else if(playAnim0){
-        for(i=0; i<numNodes; i++){
-            theta[i] = JSON.parse(JSON.stringify(animation0[playIndex][i])); 
-            initNodes(i);
-        }
-        playIndex++;
-        if(playIndex == animation0.length){
+        if(animation0.length <= 0){
+            window.alert("You did not save frames!!!");
             playAnim0 = false;
-            playIndex = 0;
+        }
+        else {
+            for(i=0; i<numNodes; i++){
+                theta[i] = JSON.parse(JSON.stringify(animation0[playIndex][i])); 
+                initNodes(i);
+            }
+            playIndex++;
+            if(playIndex == animation0.length){
+                playAnim0 = false;
+                playIndex = 0;
+            }
         }
     }
     else if(playAnim1){
-        for(i=0; i<numNodes; i++){
-            theta[i] = JSON.parse(JSON.stringify(animation1[playIndex][i])); 
-            initNodes(i);
-        }
-        playIndex++;
-        if(playIndex == animation1.length){
+        if(animation1.length <= 0){
+            window.alert("You did not save frames!!!");
             playAnim1 = false;
-            playIndex = 0;
+        }
+        else {
+            for(i=0; i<numNodes; i++){
+                theta[i] = JSON.parse(JSON.stringify(animation1[playIndex][i])); 
+                initNodes(i);
+            }
+            playIndex++;
+            if(playIndex == animation1.length){
+                playAnim1 = false;
+                playIndex = 0;
+            }
         }
     }
     else if(playAnim2){
-        for(i=0; i<numNodes; i++){
-            theta[i] = JSON.parse(JSON.stringify(animation2[playIndex][i])); 
-            initNodes(i);
-        }
-        playIndex++;
-        if(playIndex == animation2.length){
+        if(animation2.length <= 0){
+            window.alert("You did not save frames!!!");
             playAnim2 = false;
-            playIndex = 0;
+        }
+        else {
+            for(i=0; i<numNodes; i++){
+                theta[i] = JSON.parse(JSON.stringify(animation2[playIndex][i])); 
+                initNodes(i);
+            }
+            playIndex++;
+            if(playIndex == animation2.length){
+                playAnim2 = false;
+                playIndex = 0;
+            }
         }
     }
 
