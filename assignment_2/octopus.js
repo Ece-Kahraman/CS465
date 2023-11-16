@@ -39,6 +39,9 @@ var lowerLegHeight = 2 * USF;
 var lowerLegWidth = 1 * USF;
 var lowerLegDepth = 1 * USF;
 
+var playFrames = false;
+var playIndex;
+var playAnim0 = false;
 
 var numNodes = 25;
 
@@ -55,6 +58,21 @@ var numVertices = 24;
 var stack = [];
 var figure = [];
 var frames = [];
+var animations = [];
+animations.push([JSON.parse(JSON.stringify(theta))]);
+animations[0][0][0][2] = 1;
+
+
+for (var t = -180; t < 180; ++t){
+    animations[0].push(JSON.parse(JSON.stringify(theta)))
+    for (var f = 0; f < animations[0].length; f++)
+        for (var p = 0; p < numNodes; p++)
+            for (var d = 0; d < 3; d++)
+                animations[0][f][p][d] = Math.random() * 360 - 180;
+}
+ 
+
+
 
 for( var i=0; i<numNodes; i++) figure[i] = createNode(null, null);
 
@@ -107,12 +125,15 @@ function idToLocation(Id) {
 function initNodes(Id) {
 
     var m = mat4();
+    console.log("== THETA ==")
+    console.table(theta);
 
     // Head
     if (Id == 0) {
 	    m = mult(rotate(theta[0][0], 1, 0, 0), m);
 	    m = mult(rotate(theta[0][1], 0, 1, 0), m);
         m = mult(rotate(theta[0][2], 0, 0, 1), m);
+
         figure[Id] = createNode( m, body_part);
         return;
     }
@@ -155,7 +176,6 @@ function initNodes(Id) {
     }
 
 }
-
 
 function traverse(Id) {
 
@@ -282,23 +302,35 @@ window.onload = function init() {
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
+    document.getElementById("anim0").onclick = function() {
+        playAnim0 = true;
+        playIndex = 0;
+    }
+
     document.getElementById("save-frame").onclick = function() {
         console.log("never gonna give you up");
-        console.table(frames);
 
-        if( frames.length == 0 ) frames.push(theta);
+        if (frames.length == 0 ) frames.push($.extend(true, [], theta));
         else {
-            if (frames[ frames.length - 1 ] != theta) frames.push(theta);
-            else console.log("change the frame pls");
+            if ( frames[ frames.length - 1 ] === theta ) window.alert("change the frame pls");
+            else frames.push($.extend(true, [], theta));
         }
+
+        console.table(frames);
         
 
     };
     document.getElementById("play-frames").onclick = function() {
         console.log("never gonna let you down");
+
+        playFrames = true;
+        playIndex = 0;
+
     };
     document.getElementById("clear-frames").onclick = function() {
         console.log("never gonna run around and desert you");
+        frames = [];
+        console.table(frames);
     };
 
 
@@ -696,6 +728,38 @@ window.onload = function init() {
 var render = function() {
 
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+
+    if(playFrames){
+        console.log(playFrames, playIndex);
+        if(frames.length <= 0){
+            window.alert("You did not save frames!!!");
+            playFrames = false;
+        }
+        else{
+            for(i=0; i<numNodes; i++){
+                theta[i] = JSON.parse(JSON.stringify(frames[playIndex][i])); 
+                initNodes(i);
+            }
+            playIndex++;
+            if(playIndex == frames.length){
+                playFrames = false;
+                playIndex = 0;
+            }
+            
+        }  
+    }
+    else if(playAnim0){
+        for(i=0; i<numNodes; i++){
+            theta[i] = JSON.parse(JSON.stringify(animations[0][playIndex][i])); 
+            initNodes(i);
+        }
+        playIndex++;
+        if(playIndex == animations[0].length){
+            playAnim0 = false;
+            playIndex = 0;
+        }
+    }
+
     traverse(0);
     requestAnimFrame(render);
 }
