@@ -42,6 +42,8 @@ var lowerLegDepth = 1 * USF;
 
 var numNodes = 25;
 
+var alpha = [0, 0, 0];
+
 var theta = [
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
@@ -113,6 +115,7 @@ function initNodes(Id) {
 	    m = mult(rotate(theta[0][0], 1, 0, 0), m);
 	    m = mult(rotate(theta[0][1], 0, 1, 0), m);
         m = mult(rotate(theta[0][2], 0, 0, 1), m);
+        m = mult(translate(alpha[0], alpha[1], alpha[2]), m);
         figure[Id] = createNode( m, body_part);
         return;
     }
@@ -335,22 +338,22 @@ window.onload = function init() {
     };
 
     
-    /*document.getElementById("Head0MoveX").onchange = function(event) {
-        theta[0][0] = event.target.value;
+    document.getElementById("Head0MoveX").onchange = function(event) {
+        alpha[0] = event.target.value;
         initNodes(0);
     };
 
     
     document.getElementById("Head0MoveY").onchange = function(event) {
-        theta[0][0] = event.target.value;
+        alpha[1] = event.target.value;
         initNodes(0);
     };
 
     
     document.getElementById("Head0MoveZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
+        alpha[2] = event.target.value;
         initNodes(0);
-    };*/
+    };
 
     
     document.getElementById("Uparm0RotateX").onchange = function(event) {
