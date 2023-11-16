@@ -48,6 +48,7 @@
 
 <body style="display: inline;">
 
+<button id="reset-squidward">reset</button>
 <button id="save-frame">save frame</button>
 <button id="play-frames">play frames</button>
 <button id="clear-frames">clear frames</button>
@@ -66,23 +67,23 @@ Oops ... your browser doesn't support the HTML5 canvas element
       <div id="collapsePart" class="accordion-collapse collapse" aria-labelledby="headingPart" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             Rotate:
-            <div id="Head0RotateX">
+            <div id="_Head0RotateX">
                 X: -180 <input id="Head0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Head0RotateY">
+            <div id="_Head0RotateY">
                 Y: -180 <input id="Head0RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Head0RotateZ">
+            <div id="_Head0RotateZ">
                 Z: -180 <input id="Head0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/><br/>
             Translate:
-            <div id="Head0MoveX">
+            <div id="_Head0MoveX">
                 X: -5 <input id="Head0MoveX" type="range" min="-5" max="5" step="0.05" value="0" /> 5
             </div><br/>
-            <div id="Head0MoveY">
+            <div id="_Head0MoveY">
                 Y: -5 <input id="Head0MoveY" type="range" min="-5" max="5" step="0.05" value="0"/> 5
             </div><br/>                    
-            <div id="Head0MoveZ">
+            <div id="_Head0MoveZ">
                 Z: -5 <input id="Head0MoveZ" type="range" min="-5" max="5" step="0.05" value="0"/> 5
             </div><br/>
         </div>
@@ -97,83 +98,83 @@ Oops ... your browser doesn't support the HTML5 canvas element
       <div id="collapseUparm" class="accordion-collapse collapse" aria-labelledby="headingUparm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             First Arm:
-            <div id="Uparm0RotateX">
+            <div id="_Uparm0RotateX">
                 X: -180 <input id="Uparm0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm0RotateY">
+            <div id="_Uparm0RotateY">
                 Y: -180 <input id="Uparm0RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm0RotateZ">
+            <div id="_Uparm0RotateZ">
                 Z: -180 <input id="Uparm0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm1RotateX">
+            <div id="_Uparm1RotateX">
                 X: -180 <input id="Uparm1RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm1RotateY">
+            <div id="_Uparm1RotateY">
                 Y: -180 <input id="Uparm1RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm1RotateZ">
+            <div id="_Uparm1RotateZ">
                 Z: -180 <input id="Uparm1RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm2RotateX">
+            <div id="_Uparm2RotateX">
                 X: -180 <input id="Uparm2RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm2RotateY">
+            <div id="_Uparm2RotateY">
                 Y: -180 <input id="Uparm2RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm2RotateZ">
+            <div id="_Uparm2RotateZ">
                 Z: -180 <input id="Uparm2RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm3RotateX">
+            <div id="_Uparm3RotateX">
                 X: -180 <input id="Uparm3RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm3RotateY">
+            <div id="_Uparm3RotateY">
                 Y: -180 <input id="Uparm3RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm3RotateZ">
+            <div id="_Uparm3RotateZ">
                 Z: -180 <input id="Uparm3RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm4RotateX">
+            <div id="_Uparm4RotateX">
                 X: -180 <input id="Uparm4RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm4RotateY">
+            <div id="_Uparm4RotateY">
                 Y: -180 <input id="Uparm4RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm4RotateZ">
+            <div id="_Uparm4RotateZ">
                 Z: -180 <input id="Uparm4RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm5RotateX">
+            <div id="_Uparm5RotateX">
                 X: -180 <input id="Uparm5RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm5RotateY">
+            <div id="_Uparm5RotateY">
                 Y: -180 <input id="Uparm5RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm5RotateZ">
+            <div id="_Uparm5RotateZ">
                 Z: -180 <input id="Uparm5RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm6RotateX">
+            <div id="_Uparm6RotateX">
                 X: -180 <input id="Uparm6RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm6RotateY">
+            <div id="_Uparm6RotateY">
                 Y: -180 <input id="Uparm6RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm6RotateZ">
+            <div id="_Uparm6RotateZ">
                 Z: -180 <input id="Uparm6RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Uparm7RotateX">
+            <div id="_Uparm7RotateX">
                 X: -180 <input id="Uparm7RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Uparm7RotateY">
+            <div id="_Uparm7RotateY">
                 Y: -180 <input id="Uparm7RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Uparm7RotateZ">
+            <div id="_Uparm7RotateZ">
                 Z: -180 <input id="Uparm7RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
         </div>
@@ -188,83 +189,83 @@ Oops ... your browser doesn't support the HTML5 canvas element
       <div id="collapseMidarm" class="accordion-collapse collapse" aria-labelledby="headingMidarm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             First Arm:
-            <div id="Midarm0RotateX">
+            <div id="_Midarm0RotateX">
                 X: -180 <input id="Midarm0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm0RotateY">
+            <div id="_Midarm0RotateY">
                 Y: -180 <input id="Midarm0RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm0RotateZ">
+            <div id="_Midarm0RotateZ">
                 Z: -180 <input id="Midarm0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm1RotateX">
+            <div id="_Midarm1RotateX">
                 X: -180 <input id="Midarm1RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm1RotateY">
+            <div id="_Midarm1RotateY">
                 Y: -180 <input id="Midarm1RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm1RotateZ">
+            <div id="_Midarm1RotateZ">
                 Z: -180 <input id="Midarm1RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm2RotateX">
+            <div id="_Midarm2RotateX">
                 X: -180 <input id="Midarm2RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm2RotateY">
+            <div id="_Midarm2RotateY">
                 Y: -180 <input id="Midarm2RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm2RotateZ">
+            <div id="_Midarm2RotateZ">
                 Z: -180 <input id="Midarm2RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm3RotateX">
+            <div id="_Midarm3RotateX">
                 X: -180 <input id="Midarm3RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm3RotateY">
+            <div id="_Midarm3RotateY">
                 Y: -180 <input id="Midarm3RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm3RotateZ">
+            <div id="_Midarm3RotateZ">
                 Z: -180 <input id="Midarm3RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm4RotateX">
+            <div id="_Midarm4RotateX">
                 X: -180 <input id="Midarm4RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm4RotateY">
+            <div id="_Midarm4RotateY">
                 Y: -180 <input id="Midarm4RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm4RotateZ">
+            <div id="_Midarm4RotateZ">
                 Z: -180 <input id="Midarm4RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm5RotateX">
+            <div id="_Midarm5RotateX">
                 X: -180 <input id="Midarm5RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm5RotateY">
+            <div id="_Midarm5RotateY">
                 Y: -180 <input id="Midarm5RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm5RotateZ">
+            <div id="_Midarm5RotateZ">
                 Z: -180 <input id="Midarm5RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm6RotateX">
+            <div id="_Midarm6RotateX">
                 X: -180 <input id="Midarm6RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm6RotateY">
+            <div id="_Midarm6RotateY">
                 Y: -180 <input id="Midarm6RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm6RotateZ">
+            <div id="_Midarm6RotateZ">
                 Z: -180 <input id="Midarm6RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Midarm7RotateX">
+            <div id="_Midarm7RotateX">
                 X: -180 <input id="Midarm7RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Midarm7RotateY">
+            <div id="_Midarm7RotateY">
                 Y: -180 <input id="Midarm7RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Midarm7RotateZ">
+            <div id="_Midarm7RotateZ">
                 Z: -180 <input id="Midarm7RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
         </div>
@@ -279,83 +280,83 @@ Oops ... your browser doesn't support the HTML5 canvas element
       <div id="collapseLowarm" class="accordion-collapse collapse" aria-labelledby="headingLowarm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             First Arm:
-            <div id="Lowarm0RotateX">
+            <div id="_Lowarm0RotateX">
                 X: -180 <input id="Lowarm0RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm0RotateY">
+            <div id="_Lowarm0RotateY">
                 Y: -180 <input id="Lowarm0RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm0RotateZ">
+            <div id="_Lowarm0RotateZ">
                 Z: -180 <input id="Lowarm0RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm1RotateX">
+            <div id="_Lowarm1RotateX">
                 X: -180 <input id="Lowarm1RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm1RotateY">
+            <div id="_Lowarm1RotateY">
                 Y: -180 <input id="Lowarm1RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm1RotateZ">
+            <div id="_Lowarm1RotateZ">
                 Z: -180 <input id="Lowarm1RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm2RotateX">
+            <div id="_Lowarm2RotateX">
                 X: -180 <input id="Lowarm2RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm2RotateY">
+            <div id="_Lowarm2RotateY">
                 Y: -180 <input id="Lowarm2RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm2RotateZ">
+            <div id="_Lowarm2RotateZ">
                 Z: -180 <input id="Lowarm2RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm3RotateX">
+            <div id="_Lowarm3RotateX">
                 X: -180 <input id="Lowarm3RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm3RotateY">
+            <div id="_Lowarm3RotateY">
                 Y: -180 <input id="Lowarm3RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm3RotateZ">
+            <div id="_Lowarm3RotateZ">
                 Z: -180 <input id="Lowarm3RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm4RotateX">
+            <div id="_Lowarm4RotateX">
                 X: -180 <input id="Lowarm4RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm4RotateY">
+            <div id="_Lowarm4RotateY">
                 Y: -180 <input id="Lowarm4RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm4RotateZ">
+            <div id="_Lowarm4RotateZ">
                 Z: -180 <input id="Lowarm4RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm5RotateX">
+            <div id="_Lowarm5RotateX">
                 X: -180 <input id="Lowarm5RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm5RotateY">
+            <div id="_Lowarm5RotateY">
                 Y: -180 <input id="Lowarm5RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm5RotateZ">
+            <div id="_Lowarm5RotateZ">
                 Z: -180 <input id="Lowarm5RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm6RotateX">
+            <div id="_Lowarm6RotateX">
                 X: -180 <input id="Lowarm6RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm6RotateY">
+            <div id="_Lowarm6RotateY">
                 Y: -180 <input id="Lowarm6RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm6RotateZ">
+            <div id="_Lowarm6RotateZ">
                 Z: -180 <input id="Lowarm6RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
             First Arm:
-            <div id="Lowarm7RotateX">
+            <div id="_Lowarm7RotateX">
                 X: -180 <input id="Lowarm7RotateX" type="range" min="-180" max="180" step="1" value="0" /> 180
             </div><br/>
-            <div id="Lowarm7RotateY">
+            <div id="_Lowarm7RotateY">
                 Y: -180 <input id="Lowarm7RotateY" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>                    
-            <div id="Lowarm7RotateZ">
+            <div id="_Lowarm7RotateZ">
                 Z: -180 <input id="Lowarm7RotateZ" type="range" min="-180" max="180" step="1" value="0"/> 180
             </div><br/>
         </div>

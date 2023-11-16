@@ -46,6 +46,13 @@ var numNodes = 25;
 
 var alpha = [0, 0, 0];
 
+var _theta = [
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]
+];
 var theta = [
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], 
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
@@ -53,6 +60,8 @@ var theta = [
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0],
     [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]
 ];
+
+var sliders = [];
 
 var numVertices = 24;
 
@@ -126,8 +135,6 @@ function idToLocation(Id) {
 function initNodes(Id) {
 
     var m = mat4();
-    console.log("== THETA ==")
-    console.table(theta);
 
     // Head
     if (Id == 0) {
@@ -302,6 +309,18 @@ window.onload = function init() {
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
+    
+
+    document.getElementById("reset-squidward").onclick = function() {
+        for(i=0; i<numNodes; i++){
+            alpha = [0,0,0];
+            theta[i] = JSON.parse(JSON.stringify(_theta[i])); 
+            initNodes(i);
+        }
+
+        for (var slide = 0; slide < sliders.length; ++slide)
+            sliders[slide].value = "0";
+    }
 
     document.getElementById("anim0").onclick = function() {
         playAnim0 = true;
@@ -309,29 +328,21 @@ window.onload = function init() {
     }
 
     document.getElementById("save-frame").onclick = function() {
-        console.log("never gonna give you up");
 
         if (frames.length == 0 ) frames.push($.extend(true, [], theta));
         else {
             if ( frames[ frames.length - 1 ] === theta ) window.alert("change the frame pls");
             else frames.push($.extend(true, [], theta));
         }
-
-        console.table(frames);
-        
-
     };
     document.getElementById("play-frames").onclick = function() {
-        console.log("never gonna let you down");
 
         playFrames = true;
         playIndex = 0;
 
     };
     document.getElementById("clear-frames").onclick = function() {
-        console.log("never gonna run around and desert you");
         frames = [];
-        console.table(frames);
     };
 
 
@@ -353,370 +364,525 @@ window.onload = function init() {
         }
     }
     
+    sliders.push(document.getElementById("Head0RotateX"))
     
-    document.getElementById("Head0RotateX").onchange = function(event) {
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[0][0] = event.target.value;
         initNodes(0);
     };    
-    document.getElementById("Head0RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Head0RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[0][1] = event.target.value;
         initNodes(0);
     };    
-    document.getElementById("Head0RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Head0RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[0][2] = event.target.value;
         initNodes(0);
     };
 
     
-    document.getElementById("Head0MoveX").onchange = function(event) {
+    sliders.push(document.getElementById("Head0MoveX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         alpha[0] = event.target.value;
         initNodes(0);
     };
 
     
-    document.getElementById("Head0MoveY").onchange = function(event) {
+    sliders.push(document.getElementById("Head0MoveY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         alpha[1] = event.target.value;
         initNodes(0);
     };
 
     
-    document.getElementById("Head0MoveZ").onchange = function(event) {
+    sliders.push(document.getElementById("Head0MoveZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         alpha[2] = event.target.value;
         initNodes(0);
     };
 
     
-    document.getElementById("Uparm0RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm0RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[1][0] = event.target.value;
         initNodes(1);
     };    
-    document.getElementById("Uparm0RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm0RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[1][1] = event.target.value;
         initNodes(1);
     };   
-    document.getElementById("Uparm0RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm0RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[1][2] = event.target.value;
         initNodes(1);
     };
 
     
-    document.getElementById("Uparm1RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm1RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[4][0] = event.target.value;
         initNodes(4);
     };    
-    document.getElementById("Uparm1RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm1RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[4][1] = event.target.value;
         initNodes(4);
     };    
-    document.getElementById("Uparm1RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm1RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[4][2] = event.target.value;
         initNodes(4);
     };
 
     
-    document.getElementById("Uparm2RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm2RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[7][0] = event.target.value;
         initNodes(7);
     };    
-    document.getElementById("Uparm2RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm2RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[7][1] = event.target.value;
         initNodes(7);
     };    
-    document.getElementById("Uparm2RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm2RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[7][2] = event.target.value;
         initNodes(7);
     };
 
     
-    document.getElementById("Uparm3RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm3RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[10][0] = event.target.value;
         initNodes(10);
     };    
-    document.getElementById("Uparm3RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm3RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[10][1] = event.target.value;
         initNodes(10);
     };    
-    document.getElementById("Uparm3RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm3RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[10][2] = event.target.value;
         initNodes(10);
     };
 
     
-    document.getElementById("Uparm4RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm4RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[13][0] = event.target.value;
         initNodes(13);
     };    
-    document.getElementById("Uparm4RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm4RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[13][1] = event.target.value;
         initNodes(13);
     };    
-    document.getElementById("Uparm4RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm4RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[13][2] = event.target.value;
         initNodes(13);
     };
 
     
-    document.getElementById("Uparm5RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm5RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[16][0] = event.target.value;
         initNodes(16);
     };    
-    document.getElementById("Uparm5RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm5RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[16][1] = event.target.value;
         initNodes(16);
     };    
-    document.getElementById("Uparm5RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm5RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[16][2] = event.target.value;
         initNodes(16);
     };
 
     
-    document.getElementById("Uparm6RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm6RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[19][0] = event.target.value;
         initNodes(19);
     };    
-    document.getElementById("Uparm6RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm6RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[19][1] = event.target.value;
         initNodes(19);
     };    
-    document.getElementById("Uparm6RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm6RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[19][2] = event.target.value;
         initNodes(19);
     };
 
     
-    document.getElementById("Uparm7RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm7RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[22][0] = event.target.value;
         initNodes(22);
     };    
-    document.getElementById("Uparm7RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm7RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[22][1] = event.target.value;
         initNodes(22);
     };    
-    document.getElementById("Uparm7RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Uparm7RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[22][2] = event.target.value;
         initNodes(22);
     };
 
     
-    document.getElementById("Midarm0RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm0RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[2][0] = event.target.value;
         initNodes(2);
     };    
-    document.getElementById("Midarm0RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm0RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[2][1] = event.target.value;
         initNodes(2);
     };    
-    document.getElementById("Midarm0RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm0RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[2][2] = event.target.value;
         initNodes(2);
     };
 
     
-    document.getElementById("Midarm1RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm1RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[5][0] = event.target.value;
         initNodes(5);
     };    
-    document.getElementById("Midarm1RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm1RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[5][1] = event.target.value;
         initNodes(5);
     };    
-    document.getElementById("Midarm1RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm1RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[5][2] = event.target.value;
         initNodes(5);
     };
 
     
-    document.getElementById("Midarm2RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm2RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[8][0] = event.target.value;
         initNodes(8);
     };
-    document.getElementById("Midarm2RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm2RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[8][1] = event.target.value;
         initNodes(8);
     };
-    document.getElementById("Midarm2RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm2RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[8][2] = event.target.value;
         initNodes(8);
     };
 
     
-    document.getElementById("Midarm3RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm3RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[11][0] = event.target.value;
         initNodes(11);
     };
-    document.getElementById("Midarm3RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm3RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[11][1] = event.target.value;
         initNodes(11);
     };
-    document.getElementById("Midarm3RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm3RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[11][2] = event.target.value;
         initNodes(11);
     };
 
     
-    document.getElementById("Midarm4RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm4RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[14][0] = event.target.value;
         initNodes(14);
     };
-    document.getElementById("Midarm4RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm4RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[14][1] = event.target.value;
         initNodes(14);
     };
-    document.getElementById("Midarm4RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm4RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[14][2] = event.target.value;
         initNodes(14);
     };
 
     
-    document.getElementById("Midarm5RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm5RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[17][0] = event.target.value;
         initNodes(17);
     };
-    document.getElementById("Midarm5RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm5RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[17][1] = event.target.value;
         initNodes(17);
     };
-    document.getElementById("Midarm5RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm5RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[17][2] = event.target.value;
         initNodes(17);
     };
 
     
-    document.getElementById("Midarm6RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm6RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[20][0] = event.target.value;
         initNodes(20);
     };
-    document.getElementById("Midarm6RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm6RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[20][1] = event.target.value;
         initNodes(20);
     };
-    document.getElementById("Midarm6RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm6RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[20][2] = event.target.value;
         initNodes(20);
     };
 
     
-    document.getElementById("Midarm7RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm7RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[23][0] = event.target.value;
         initNodes(23);
     };    
-    document.getElementById("Midarm7RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm7RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[23][1] = event.target.value;
         initNodes(23);
     };    
-    document.getElementById("Midarm7RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Midarm7RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[23][2] = event.target.value;
         initNodes(23);
     };
 
     
-    document.getElementById("Lowarm0RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm0RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[3][0] = event.target.value;
         initNodes(3);
     };    
-    document.getElementById("Lowarm0RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm0RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[3][1] = event.target.value;
         initNodes(3);
     };
-    document.getElementById("Lowarm0RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm0RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[3][2] = event.target.value;
         initNodes(3);
     };
 
     
-    document.getElementById("Lowarm1RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm1RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[6][0] = event.target.value;
         initNodes(6);
     };    
-    document.getElementById("Lowarm1RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm1RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[6][1] = event.target.value;
         initNodes(6);
     };    
-    document.getElementById("Lowarm1RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm1RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[6][2] = event.target.value;
         initNodes(6);
     };
 
     
-    document.getElementById("Lowarm2RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm2RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[9][0] = event.target.value;
         initNodes(9);
     };    
-    document.getElementById("Lowarm2RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm2RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[9][1] = event.target.value;
         initNodes(9);
     };    
-    document.getElementById("Lowarm2RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm2RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[9][2] = event.target.value;
         initNodes(9);
     };
 
     
-    document.getElementById("Lowarm3RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm3RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[12][0] = event.target.value;
         initNodes(12);
     };
-    document.getElementById("Lowarm3RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm3RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[12][1] = event.target.value;
         initNodes(12);
     };
-    document.getElementById("Lowarm3RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm3RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[12][2] = event.target.value;
         initNodes(12);
     };
 
     
-    document.getElementById("Lowarm4RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm4RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[15][0] = event.target.value;
         initNodes(15);
     };    
-    document.getElementById("Lowarm4RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm4RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[15][1] = event.target.value;
         initNodes(15);
     };
-    document.getElementById("Lowarm4RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm4RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[15][2] = event.target.value;
         initNodes(15);
     };
 
     
-    document.getElementById("Lowarm5RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm5RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[18][0] = event.target.value;
         initNodes(18);
     };    
-    document.getElementById("Lowarm5RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm5RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[18][1] = event.target.value;
         initNodes(18);
     };    
-    document.getElementById("Lowarm5RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm5RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[18][2] = event.target.value;
         initNodes(18);
     };
 
     
-    document.getElementById("Lowarm6RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm6RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[21][0] = event.target.value;
         initNodes(21);
     };    
-    document.getElementById("Lowarm6RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm6RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[21][1] = event.target.value;
         initNodes(21);
     };    
-    document.getElementById("Lowarm6RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm6RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[21][2] = event.target.value;
         initNodes(21);
     };
 
     
-    document.getElementById("Lowarm7RotateX").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm7RotateX"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[24][0] = event.target.value;
         initNodes(24);
     };    
-    document.getElementById("Lowarm7RotateY").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm7RotateY"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[24][1] = event.target.value;
         initNodes(24);
     };    
-    document.getElementById("Lowarm7RotateZ").onchange = function(event) {
+    sliders.push(document.getElementById("Lowarm7RotateZ"))
+    
+    sliders[sliders.length - 1].onchange = function(event) {
         theta[24][2] = event.target.value;
         initNodes(24);
     };
