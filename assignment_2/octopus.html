@@ -45,7 +45,11 @@
 
 </head>
 
-<body style="display: flex;">
+<body style="display: inline;">
+
+<button id="save-frame">save frame</button>
+<button id="play-frames">play frames</button>
+<button id="clear-frames">clear frames</button>
 <canvas id="gl-canvas" width="512" height="512">
 Oops ... your browser doesn't support the HTML5 canvas element
 </canvas>
@@ -57,7 +61,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
           Part Controls
         </button>
       </h2>
-      <div id="collapsePart" class="accordion-collapse collapse show" aria-labelledby="headingPart" data-bs-parent="#sliderAccordion">
+      <div id="collapsePart" class="accordion-collapse collapse" aria-labelledby="headingPart" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             Rotate:
             <div id="Head0RotateX">
@@ -88,7 +92,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
           Uparm Controls
         </button>
       </h2>
-      <div id="collapseUparm" class="accordion-collapse collapse show" aria-labelledby="headingUparm" data-bs-parent="#sliderAccordion">
+      <div id="collapseUparm" class="accordion-collapse collapse" aria-labelledby="headingUparm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             First Arm:
             <div id="Uparm0RotateX">
@@ -179,7 +183,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
           Midarm Controls
         </button>
       </h2>
-      <div id="collapseMidarm" class="accordion-collapse collapse show" aria-labelledby="headingMidarm" data-bs-parent="#sliderAccordion">
+      <div id="collapseMidarm" class="accordion-collapse collapse" aria-labelledby="headingMidarm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             First Arm:
             <div id="Midarm0RotateX">
@@ -270,7 +274,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
           Lowarm Controls
         </button>
       </h2>
-      <div id="collapseLowarm" class="accordion-collapse collapse show" aria-labelledby="headingLowarm" data-bs-parent="#sliderAccordion">
+      <div id="collapseLowarm" class="accordion-collapse collapse" aria-labelledby="headingLowarm" data-bs-parent="#sliderAccordion">
         <div class="accordion-body">
             First Arm:
             <div id="Lowarm0RotateX">
@@ -355,61 +359,7 @@ Oops ... your browser doesn't support the HTML5 canvas element
         </div>
       </div>
     </div>
-  </div>
-
-<!--input id="slider1" type="range" min="-180" max="180" step=".5" value="0"/>
-<input id="slider2" type="range" min="-180" max="180" step=".5" value="0"/>
-<input id="slider3" type="range" min="-90" max="90" step="5" value="0"/-->
-    
-<!--div id="slider10">
-    upper arm x-axis -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-</div><br/>
-<div id="slider11">
-    upper arm y-axis -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-</div><br/>
-<div id="slider12">
-    upper arm z-axis -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-</div><br/>
-    <div id="slider5">
-    right lower arm angle -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-    </div><br/>
-    <div id="slider6">
-    left upper leg angle -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-    </div><br/>
-    <div id="slider7">
-    left lower leg angle -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-    </div><br/>
-    <div id="slider8">
-    right upper leg angle -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-    </div><br/>
-    
-    <div id="slider9">
-    right lower leg angle -180 <input id="slide" type="range"
-     min="-180" max="180" step="10" value="0"
-      />
-     180
-    </div><br/-->
+</div>
 
 
 </body>

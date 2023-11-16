@@ -53,8 +53,8 @@ var theta = [
 var numVertices = 24;
 
 var stack = [];
-
 var figure = [];
+var frames = [];
 
 for( var i=0; i<numNodes; i++) figure[i] = createNode(null, null);
 
@@ -282,90 +282,55 @@ window.onload = function init() {
     gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
+    document.getElementById("save-frame").onclick = function() {
+        console.log("never gonna give you up");
+        console.table(frames);
+
+        if( frames.length == 0 ) frames.push(theta);
+        else {
+            if (frames[ frames.length - 1 ] != theta) frames.push(theta);
+            else console.log("change the frame pls");
+        }
+        
+
+    };
+    document.getElementById("play-frames").onclick = function() {
+        console.log("never gonna let you down");
+    };
+    document.getElementById("clear-frames").onclick = function() {
+        console.log("never gonna run around and desert you");
+    };
+
+
+
     var accordionIds = [];
 
     var parts = ["Head", "Uparm", "Midarm", "Lowarm"];
     var partOffsets = ["0", "1", "2", "3", "4", "5", "6", "7"];
     var types =  ["Rotate", "Move"];
     var axises = ["X", "Y", "Z"];
-
-    //var accordions = document.getElementById("sliderAccordion");
-    //var exampleAccordion = accordions.children[0];
-    //exampleAccordion.hidden = false;
     
     for (var part in parts) {
-
-        /*var newAccordion = exampleAccordion.cloneNode(true);
-
-        if (parts[part] == "Head") {
-            for (var pi = 1; pi < 8; ++pi)
-                newAccordion.children[1].children[0].children.removeChild(pi);
-        }
-
-        newAccordion.id = parts[part] + "Accordion";
-
-        newAccordion.children[0].id = "heading" + parts[part];
-
-        newAccordion.children[0].children[0].setAttribute("data-bs-target", "#collapse" + parts[part]);
-        newAccordion.children[0].children[0].setAttribute("data-bs-target", "#collapse" + parts[part]);
-        newAccordion.children[0].children[0].setAttribute("aria-controls", "collapse" + parts[part]);
-        newAccordion.children[0].children[0].innerText = parts[part] + " Controls";
-        
-        newAccordion.children[1].id = "collapse" + parts[part];
-        newAccordion.children[1].setAttribute("aria-labelledby", "heading" + parts[part]);
-
-        var i = 0;*/
         for (var partOffset in (parts[part] == "Head" ? [partOffsets[0]] : partOffsets)) {
             for (var type in (parts[part] == "Head" ? types : [types[0]])) {
                 for (var axis in axises) {
                     accordionIds.push(parts[part] + partOffsets[partOffset] + types[type] + axises[axis]);
                 }
-            }/*
-
-            var moveSlider0 = newAccordion.children[1].children[0].children[0].cloneNode(true);
-            var moveSlider1 = newAccordion.children[1].children[0].children[2].cloneNode(true);
-            var moveSlider2 = newAccordion.children[1].children[0].children[4].cloneNode(true);
-            
-            newAccordion.children[1].children[0].children[0].id = accordionIds[i];
-            newAccordion.children[1].children[0].children[0].children[0].id = accordionIds[i++];
-            newAccordion.children[1].children[0].children[2].id = accordionIds[i];
-            newAccordion.children[1].children[0].children[2].children[0].id = accordionIds[i++];
-            newAccordion.children[1].children[0].children[4].id = accordionIds[i];
-            newAccordion.children[1].children[0].children[4].children[0].id = accordionIds[i++];
-
-            if (parts[part] == "Head") {
-                var headAccordion = newAccordion.cloneNode(true);
-                moveSlider0.id = accordionIds[i];
-                moveSlider0.children[0].id = accordionIds[i++];
-                headAccordion.children[1].children[0].appendChild(moveSlider0);
-                moveSlider1.id = accordionIds[i];
-                moveSlider1.children[0].id = accordionIds[i++];
-                headAccordion.children[1].children[0].appendChild(moveSlider1);
-                moveSlider2.id = accordionIds[i];
-                moveSlider2.children[0].id = accordionIds[i++];
-                headAccordion.children[1].children[0].appendChild(moveSlider2);
-            }*/
+            }
         }
-        //accordions.appendChild(parts[part] == "Head" ? headAccordion : newAccordion);
     }
-    //exampleAccordion.hidden = true;
-    //console.log(accordionIds);
     
     
     document.getElementById("Head0RotateX").onchange = function(event) {
         theta[0][0] = event.target.value;
         initNodes(0);
-    };
-
-    
+    };    
     document.getElementById("Head0RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
+        theta[0][1] = event.target.value;
         initNodes(0);
-    };
-
-    
+    };    
     document.getElementById("Head0RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
+        theta[0][2] = event.target.value;
         initNodes(0);
     };
 
@@ -389,445 +354,339 @@ window.onload = function init() {
 
     
     document.getElementById("Uparm0RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[1][0] = event.target.value;
+        initNodes(1);
+    };    
     document.getElementById("Uparm0RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[1][1] = event.target.value;
+        initNodes(1);
+    };   
     document.getElementById("Uparm0RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[1][2] = event.target.value;
+        initNodes(1);
     };
 
     
     document.getElementById("Uparm1RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[4][0] = event.target.value;
+        initNodes(4);
+    };    
     document.getElementById("Uparm1RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[4][1] = event.target.value;
+        initNodes(4);
+    };    
     document.getElementById("Uparm1RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[4][2] = event.target.value;
+        initNodes(4);
     };
 
     
     document.getElementById("Uparm2RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[7][0] = event.target.value;
+        initNodes(7);
+    };    
     document.getElementById("Uparm2RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[7][1] = event.target.value;
+        initNodes(7);
+    };    
     document.getElementById("Uparm2RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[7][2] = event.target.value;
+        initNodes(7);
     };
 
     
     document.getElementById("Uparm3RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[10][0] = event.target.value;
+        initNodes(10);
+    };    
     document.getElementById("Uparm3RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[10][1] = event.target.value;
+        initNodes(10);
+    };    
     document.getElementById("Uparm3RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[10][2] = event.target.value;
+        initNodes(10);
     };
 
     
     document.getElementById("Uparm4RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[13][0] = event.target.value;
+        initNodes(13);
+    };    
     document.getElementById("Uparm4RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[13][1] = event.target.value;
+        initNodes(13);
+    };    
     document.getElementById("Uparm4RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[13][2] = event.target.value;
+        initNodes(13);
     };
 
     
     document.getElementById("Uparm5RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[16][0] = event.target.value;
+        initNodes(16);
+    };    
     document.getElementById("Uparm5RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[16][1] = event.target.value;
+        initNodes(16);
+    };    
     document.getElementById("Uparm5RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[16][2] = event.target.value;
+        initNodes(16);
     };
 
     
     document.getElementById("Uparm6RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[19][0] = event.target.value;
+        initNodes(19);
+    };    
     document.getElementById("Uparm6RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[19][1] = event.target.value;
+        initNodes(19);
+    };    
     document.getElementById("Uparm6RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[19][2] = event.target.value;
+        initNodes(19);
     };
 
     
     document.getElementById("Uparm7RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[22][0] = event.target.value;
+        initNodes(22);
+    };    
     document.getElementById("Uparm7RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[22][1] = event.target.value;
+        initNodes(22);
+    };    
     document.getElementById("Uparm7RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[22][2] = event.target.value;
+        initNodes(22);
     };
 
     
     document.getElementById("Midarm0RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[2][0] = event.target.value;
+        initNodes(2);
+    };    
     document.getElementById("Midarm0RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[2][1] = event.target.value;
+        initNodes(2);
+    };    
     document.getElementById("Midarm0RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[2][2] = event.target.value;
+        initNodes(2);
     };
 
     
     document.getElementById("Midarm1RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[5][0] = event.target.value;
+        initNodes(5);
+    };    
     document.getElementById("Midarm1RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[5][1] = event.target.value;
+        initNodes(5);
+    };    
     document.getElementById("Midarm1RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[5][2] = event.target.value;
+        initNodes(5);
     };
 
     
     document.getElementById("Midarm2RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[8][0] = event.target.value;
+        initNodes(8);
     };
-
-    
     document.getElementById("Midarm2RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[8][1] = event.target.value;
+        initNodes(8);
     };
-
-    
     document.getElementById("Midarm2RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[8][2] = event.target.value;
+        initNodes(8);
     };
 
     
     document.getElementById("Midarm3RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[11][0] = event.target.value;
+        initNodes(11);
     };
-
-    
     document.getElementById("Midarm3RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[11][1] = event.target.value;
+        initNodes(11);
     };
-
-    
     document.getElementById("Midarm3RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[11][2] = event.target.value;
+        initNodes(11);
     };
 
     
     document.getElementById("Midarm4RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[14][0] = event.target.value;
+        initNodes(14);
     };
-
-    
     document.getElementById("Midarm4RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[14][1] = event.target.value;
+        initNodes(14);
     };
-
-    
     document.getElementById("Midarm4RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[14][2] = event.target.value;
+        initNodes(14);
     };
 
     
     document.getElementById("Midarm5RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[17][0] = event.target.value;
+        initNodes(17);
     };
-
-    
     document.getElementById("Midarm5RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[17][1] = event.target.value;
+        initNodes(17);
     };
-
-    
     document.getElementById("Midarm5RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[17][2] = event.target.value;
+        initNodes(17);
     };
 
     
     document.getElementById("Midarm6RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[20][0] = event.target.value;
+        initNodes(20);
     };
-
-    
     document.getElementById("Midarm6RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[20][1] = event.target.value;
+        initNodes(20);
     };
-
-    
     document.getElementById("Midarm6RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[20][2] = event.target.value;
+        initNodes(20);
     };
 
     
     document.getElementById("Midarm7RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[23][0] = event.target.value;
+        initNodes(23);
+    };    
     document.getElementById("Midarm7RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[23][1] = event.target.value;
+        initNodes(23);
+    };    
     document.getElementById("Midarm7RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[23][2] = event.target.value;
+        initNodes(23);
     };
 
     
     document.getElementById("Lowarm0RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[3][0] = event.target.value;
+        initNodes(3);
+    };    
     document.getElementById("Lowarm0RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[3][1] = event.target.value;
+        initNodes(3);
     };
-
-    
     document.getElementById("Lowarm0RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[3][2] = event.target.value;
+        initNodes(3);
     };
 
     
     document.getElementById("Lowarm1RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[6][0] = event.target.value;
+        initNodes(6);
+    };    
     document.getElementById("Lowarm1RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[6][1] = event.target.value;
+        initNodes(6);
+    };    
     document.getElementById("Lowarm1RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[6][2] = event.target.value;
+        initNodes(6);
     };
 
     
     document.getElementById("Lowarm2RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[9][0] = event.target.value;
+        initNodes(9);
+    };    
     document.getElementById("Lowarm2RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[9][1] = event.target.value;
+        initNodes(9);
+    };    
     document.getElementById("Lowarm2RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[9][2] = event.target.value;
+        initNodes(9);
     };
 
     
     document.getElementById("Lowarm3RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[12][0] = event.target.value;
+        initNodes(12);
     };
-
-    
     document.getElementById("Lowarm3RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[12][1] = event.target.value;
+        initNodes(12);
     };
-
-    
     document.getElementById("Lowarm3RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[12][2] = event.target.value;
+        initNodes(12);
     };
 
     
     document.getElementById("Lowarm4RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[15][0] = event.target.value;
+        initNodes(15);
+    };    
     document.getElementById("Lowarm4RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[15][1] = event.target.value;
+        initNodes(15);
     };
-
-    
     document.getElementById("Lowarm4RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[15][2] = event.target.value;
+        initNodes(15);
     };
 
     
     document.getElementById("Lowarm5RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[18][0] = event.target.value;
+        initNodes(18);
+    };    
     document.getElementById("Lowarm5RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[18][1] = event.target.value;
+        initNodes(18);
+    };    
     document.getElementById("Lowarm5RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[18][2] = event.target.value;
+        initNodes(18);
     };
 
     
     document.getElementById("Lowarm6RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[21][0] = event.target.value;
+        initNodes(21);
+    };    
     document.getElementById("Lowarm6RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[21][1] = event.target.value;
+        initNodes(21);
+    };    
     document.getElementById("Lowarm6RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[21][2] = event.target.value;
+        initNodes(21);
     };
 
     
     document.getElementById("Lowarm7RotateX").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[24][0] = event.target.value;
+        initNodes(24);
+    };    
     document.getElementById("Lowarm7RotateY").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
-    };
-
-    
+        theta[24][1] = event.target.value;
+        initNodes(24);
+    };    
     document.getElementById("Lowarm7RotateZ").onchange = function(event) {
-        theta[0][0] = event.target.value;
-        initNodes(0);
+        theta[24][2] = event.target.value;
+        initNodes(24);
     };
-
-    /*
-        document.getElementById("slider9").onchange = function() {
-        theta[rightLowerLegId] = event.srcElement.value;
-        initNodes(rightLowerLegId);
-    };
-    document.getElementById("slider10").onchange = function() {
-         theta[head2Id] = event.srcElement.value;
-         initNodes(head2Id);
-    };*/
 
     for(i=0; i<numNodes; i++) initNodes(i);
     render();
