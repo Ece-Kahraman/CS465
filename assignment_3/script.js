@@ -2,6 +2,10 @@ var canvas;
 var gl;
 var program;
 var positions = [];
+var colors = [];
+var projectionMatrixLoc;
+var modelViewMatrixLoc;
+var vBuffer;
 
 function x(u, v, aa) {
     
@@ -23,34 +27,46 @@ function z(u, v, aa) {
 }
 
 window.onload = function init() {
-    var canvas = document.getElementById('canvas');
-    var gl = canvas.getContext('webgl');
+    canvas = document.getElementById('canvas');
+    gl = canvas.getContext('webgl');
 
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
 
-    for (var u = 0; u < 2 * Math.PI; u += 0.1) {
-        for (var v = 0; v < 2 * Math.PI; v += 0.1) {
-            positions.push(x(u, v));
-            positions.push(y(u, v));
-            positions.push(z(u, v));
+
+    for (var u = -14; u <= 14; u += 0.1) {
+        for (var v = -37.4; v < 37.4; v += 0.1) {
+            //let x1 = (x(u, v, 0.5)/Math.PI) + 1
+            //let y1 = (y(u, v, 0.5)/Math.PI) + 1
+            //let z1 = (z(u, v, 0.5)/Math.PI) + 1
+            positions.push(vec4(x(u, v, 0.4), y(u, v, 0.4), z(u, v, 0.4), 1.0));
+            //console.log(x1, y1, z1)
+            //positions.push(y(u, v, 0.5));
+            //positions.push(z(u, v, 0.5));
+            //positions.push(1);
         }
     }
 
-    var positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+
+    vBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(positions), gl.STATIC_DRAW);
+    
+    var vPosition = gl.getAttribLocation( program, "aVertexPosition" );
+    gl.vertexAttribPointer( vPosition, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );
+
 
     var buffers = {
-        position: positionBuffer,
-        numVertices: positions.length / 3,
+        position: vBuffer,
+        numVertices: positions.length/3,
     };
-
-    drawScene(gl, programInfo, buffers);
+    drawScene(gl, buffers);
 }
 
-function drawScene(gl, programInfo, buffers) {
+function drawScene(gl, buffers) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
     gl.enable(gl.DEPTH_TEST);
@@ -58,56 +74,18 @@ function drawScene(gl, programInfo, buffers) {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    const fieldOfView = 45 * Math.PI / 180;   // in radians
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 100.0;
-    const projectionMatrix = mat4.create();
+    const fieldOfView = 45 * Math.PI / 180;
+    const aspect = canvas.width / canvas.height;
+    const zNear = 0;
+    const zFar = 100;
+    var projection = mat4();
+    projection = perspective(fieldOfView, aspect, zNear, zFar);
 
-    mat4.perspective(projectionMatrix,
-        fieldOfView,
-        aspect,
-        zNear,
-        zFar);
+    var modelView = mat4();
+    modelView = translate( 0.0, 0.0, -600.0);
 
-    const modelViewMatrix = mat4.create();
+    gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projection) );
+    gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelView) );
 
-    mat4.translate(modelViewMatrix,     // destination matrix
-        modelViewMatrix,     // matrix to translate
-        [-0.0, 0.0, -6.0]);  // amount to translate
-
-    {
-        const numComponents = 3;
-        const type = gl.FLOAT;
-        const normalize = false;
-        const stride = 0;
-        const offset = 0;
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
-        gl.vertexAttribPointer(
-            programInfo.attribLocations.vertexPosition,
-            numComponents,
-            type,
-            normalize,
-            stride,
-            offset);
-        gl.enableVertexAttribArray(
-            programInfo.attribLocations.vertexPosition);
-    }
-
-    gl.useProgram(programInfo.program);
-
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.projectionMatrix,
-        false,
-        projectionMatrix);
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.modelViewMatrix,
-        false,
-        modelViewMatrix);
-
-    {
-        const offset = 0;
-        const vertexCount = buffers.numVertices;
-        gl.drawArrays(gl.TRIANGLES, offset, vertexCount);
-    }
+    gl.drawArrays(gl.LINE_STRIP, 0, buffers.numVertices);
 }
