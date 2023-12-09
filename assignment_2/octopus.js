@@ -940,7 +940,9 @@ window.onload = function init() {
         theta[24][2] = event.target.value;
         initNodes(24);
     };
-
+	
+	gl.enable(gl.DEPTH_TEST);
+	
     for(i=0; i<numNodes; i++) initNodes(i);
     render();
 }

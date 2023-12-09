@@ -10,3 +10,6 @@ Completed by:
 
 ## Assignment 2
   Modeling and Animating A 3D Octopus Using WebGL
+
+## Assignment 3
+  Parametric equations
