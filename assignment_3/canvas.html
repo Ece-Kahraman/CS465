@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CS465 Assignment 3</title>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 aVertexPosition;
+        uniform mat4 uModelViewMatrix;
+        uniform mat4 uProjectionMatrix;
+
+        void main() {
+            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        void main() {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    </script>
+
+    <script type="text/javascript" src="Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="Common/initShaders.js"></script>
+    <script type="text/javascript" src="Common/MV.js"></script>
+    <link
+        href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAABxbGj/cWxo/3FsaP9xbGj/cWxo/3FsaP9xbGj/cWxo/3FsaP9xbGj/cWxo/3FsaP9xbGj/cWxo/3FsaP9xbGj/ODIr/zgyK/84Miv/ODIr/zgyK/84Miv/ODIr/zgyLP84Miz/ODIr/zgyK/84Miv/ODIr/zgyK/84Miv/ODIr/0I8Nv9CPDb/Qjw2/0I8Nv9CPDb/QTs3/0E7OP9BOzf/QTs4/0E7Of9CPDb/Qjw2/0I8Nv9CPDb/Qjw2/0I8Nv9AOjT/QDo0/0A6NP9AOjT/QDo1/0I7L/9DPSr/Qjws/0M9Kv9FPib/QTsy/0A6Nf9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/Pzk2/0I8Lv85M0v/Kyd1/xMRw/8SEMf/IyCP/z04PP9BOzL/QDo1/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo1/0I8L/88NkL/DgzT/xEPyv8AAP//AAD+/wIC+f8gHZj/Qjsv/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0E6Mv8/OTj/Hxyd/xUTvf8IB+b/Cgne/xcVtf8VE73/BAPz/yIflP9EPib/Pzk3/0A6NP9AOjT/QDo0/0A6Nf9CPC3/NjFT/x0aov8cGqX/EhDG/xEPy/8CAfr/AAD+/wAA//8MC9n/QTsy/0A6NP9AOjT/QDo0/0A6NP8/OTb/Qz0q/zAsZv8YFbP/JCGM/woJ4f8EA/P/BQTx/wYG6/8JCOT/GBaz/z85Nv9AOjP/QDo0/0A6NP9AOjT/QDo1/0E7Mf88NkH/FBK//yQhi/8YFrL/EA7N/xMRwv8UEr//DQzV/xgWsv9CPCz/QDo2/0A6NP9AOjT/QDo0/0A6NP8/OTf/RD4m/x4bn/8RD8j/FhS5/wkI4v8AAP//AAD+/wAA//8tKXH/Qz0p/z85N/9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6M/8/OTb/KSV7/wQD8/8ODdP/ExHE/xQSwP8qJnr/Qz0q/z85Nv9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjX/QDoz/0M9Kv82MVT/JiKH/y0ocf9AOjT/RD4o/z85Nv9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6Nf8/OTb/Qjwt/0U+JP9EPSj/QDo0/z85N/9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6Nv8/OTf/Pzk3/0A6Nf9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/QDo0/0A6NP9AOjT/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+        rel="icon" type="image/x-icon" />
+    <script type="text/javascript" src="script.js"></script>
+</head>
+
+<body>
+    <div style="display: flex;">
+        <canvas id="gl-canvas" width="600" height="600" style="border: 2px solid black;">
+            Oops ... your browser doesn't support the HTML5 canvas element
+        </canvas>
+
+        <!-- Application Configuration Tools -->
+        <div style="padding-left: 60px;">
+            
+
+        </div>
+    </div>
+</body>
+
+</html>
