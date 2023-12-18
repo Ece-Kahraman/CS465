@@ -17,7 +17,7 @@ var vertexColors = [
 ];
 var vBuffer;
 
-const lightSource = [0, 1, 0];
+const lightSourcePos = [0, 0, 1];
 
 var left = -2.0;
 var right = 2.0;
@@ -93,7 +93,7 @@ window.onload = function init() {
     const step = (maxUV - minUV)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
-    var p1, p2, prev1, prev2, n1, n2;
+    var p1, p2, prev1, prev2, n1, n2, b1, b2;
     
     for (let u = minUV; u < maxUV; u += step) {
         p1 = [x(u, w)/5, y(u, minUV, w)/5, z(u, minUV, w)/5];
@@ -109,8 +109,8 @@ window.onload = function init() {
             n1 = normal(...prev1, ...prev2, ...p1);
             n2 = normal(...prev2, ...p1, ...p2);
 
-            const b1 = brightness(...n1, ...lightSource);
-            const b2 = brightness(...n2, ...lightSource);
+            b1 = brightness(...n1, ...lightSourcePos);
+            b2 = brightness(...n2, ...lightSourcePos);
             
             colors.push([b1, b1, b1, 1]);
             colors.push([b2, b2, b2, 1]);
