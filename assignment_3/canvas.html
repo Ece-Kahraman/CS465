@@ -5,18 +5,28 @@
     <title>CS465 Assignment 3</title>
 
     <script id="vertex-shader" type="x-shader/x-vertex">
-        attribute vec4 aVertexPosition;
-        uniform mat4 uModelViewMatrix;
-        uniform mat4 uProjectionMatrix;
+        attribute vec3 position;
+        //uniform mat4 uModelViewMatrix;
+        uniform mat4 projectionMatrix;
+        attribute  vec4 vColor;
+        varying vec4 fColor;
+
+
 
         void main() {
-            gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+            gl_Position = vec4(position, 1.0);
+            fColor = vColor;
+
         }
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+        
+
         void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            gl_FragColor = fColor;
         }
     </script>
 
