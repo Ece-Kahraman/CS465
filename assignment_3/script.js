@@ -17,7 +17,8 @@ var vertexColors = [
 ];
 var vBuffer;
 
-const lightSourcePos = [0, 0, 1];
+const lightSourcePos = [1, 1, 1];
+var inputs = [];
 
 var left = -2.0;
 var right = 2.0;
@@ -31,8 +32,6 @@ var eye;
 
 const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
-
-var numUPoints = 50, numVPoints = 50;
 
 const aa = 0.8;
 
@@ -76,7 +75,15 @@ function brightness(v1x, v1y, v1z, v2x, v2y, v2z) {
 
     const nur = dot / (v1len * v2len);
 
-    return nur ? nur <= 0 : 0;
+    return Math.abs(nur);
+}
+
+function shadedColor(p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z){
+
+    const norm = normal(p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z);
+    const bright = brightness(...norm, ...lightSourcePos);
+    return bright; 
+
 }
 
 window.onload = function init() {
@@ -90,57 +97,34 @@ window.onload = function init() {
     
     
     const minUV = -10, maxUV = 10;
-    const step = (maxUV - minUV)/150;
-    let w = Math.sqrt(1 - Math.pow(aa, 2));
-
-    var p1, p2, prev1, prev2, n1, n2, b1, b2;
-    
-    for (let u = minUV; u < maxUV; u += step) {
-        p1 = [x(u, w)/5, y(u, minUV, w)/5, z(u, minUV, w)/5];
-        p2 = [x(u+step, w)/5, y(u+step, minUV, w)/5, z(u+step, minUV, w)/5];
-        oneStrip.push(...p1, ...p2);
-        prev1 = p1;
-        prev2 = p2;
-        for (let v = minUV+step; v < maxUV; v += step) {    
-            p1 = [x(u, w)/5, y(u, v, w)/5, z(u, v, w)/5];
-            p2 = [x(u+step, w)/5, y(u+step, v, w)/5, z(u+step, v, w)/5];
-            oneStrip.push(...p1, ...p2);
-
-            n1 = normal(...prev1, ...prev2, ...p1);
-            n2 = normal(...prev2, ...p1, ...p2);
-
-            b1 = brightness(...n1, ...lightSourcePos);
-            b2 = brightness(...n2, ...lightSourcePos);
-            
-            colors.push([b1, b1, b1, 1]);
-            colors.push([b2, b2, b2, 1]);
-
-            prev1 = p1;
-            prev2 = p2;
-            
-        }
-        strips.push(...oneStrip);
-        oneStrip = [];
-    }
+    const detail = 100;
+    const step = (maxUV - minUV)/detail;
 
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
-    vBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(strips), gl.STATIC_DRAW);
     
-    var vPosition = gl.getAttribLocation( program, "position" );
-    gl.enableVertexAttribArray( vPosition );
-    gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
+    for (let u = minUV; u < maxUV; u += step) {
+        if (inputs.length >= 18*detail*detail) break;
+        for (let v = minUV; v < maxUV; v += step) {              
+            inputs.push(u, v, aa, u+step, v, aa, u, v+step, aa, u+step, v, aa, u, v+step, aa, u+step, v+step, aa);
+        }
+    }
 
-    var cBuffer = gl.createBuffer();
+    inputs.splice(18*detail*detail);
+
+
+    var inputsBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, inputsBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(inputs), gl.STATIC_DRAW);
+
+    /*var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
     gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
 
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vColor );
+    gl.enableVertexAttribArray( vColor );*/
     
 
 
@@ -160,7 +144,7 @@ var render = function(){
 
 // render columns of data then rows
         
-    for(let i=0; i<strips.length; i++) gl.drawArrays( gl.TRIANGLE_STRIP, i*606, 606 );            
+    gl.drawArrays( gl.TRIANGLES, 0, inputs.length/3 );            
     //for(var i=0; i<numVPoints; i++) gl.drawArrays( gl.LINE_STRIP, i*numUPoints+positions.length/2, numUPoints );
     //gl.drawArrays(gl.TRIANGLES_STRIP, 0, positions.length / 3);
     //requestAnimFrame(render);
