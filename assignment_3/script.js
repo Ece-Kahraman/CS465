@@ -3,6 +3,7 @@ var gl;
 var program;
 var strips = [];
 var oneStrip = [];
+var normals = [];
 var colors = [];
 var vertexColors = [
     [ 0.0, 0.0, 0.0, 1.0 ],  // black
@@ -15,6 +16,8 @@ var vertexColors = [
     [ 1.0, 1.0, 1.0, 1.0 ]   // white
 ];
 var vBuffer;
+
+const lightSource = [0, 1, 0];
 
 var left = -2.0;
 var right = 2.0;
@@ -49,6 +52,33 @@ function z(u, v, w) {
     return (2*w*Math.cosh(aa*u)*(-1*w*Math.sin(v)*Math.cos(w*v)+Math.cos(v)*Math.sin(w*v)))/denom;
 }
 
+function normal(p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z) {
+    var v1x = p2x - p1x, v1y = p2y -  p1y, v1z = p2z - p1z;
+    var v2x = p3x - p1x, v2y = p3y -  p1y, v2z = p3z - p1z;
+
+    var nx = v1y * v2z - v1z * v2y;
+    var ny = v1z * v2x - v1x * v2z;
+    var nz = v1x * v2y - v1y * v2x;
+
+    var len = nx + ny + nz ? Math.sqrt(nx**2 + ny**2 + nz**2) : 1e8;
+    nx /= len;
+    ny /= len;
+    nz /= len;
+
+    return [nx, ny, nz];
+}
+
+function brightness(v1x, v1y, v1z, v2x, v2y, v2z) {
+    const dot = v1x * v2x + v1y * v2y + v1z * v2z;
+
+    const v1len = Math.sqrt(v1x**2 + v1y**2 + v1z**2);
+    const v2len = Math.sqrt(v2x**2 + v2y**2 + v2z**2);
+
+    const nur = dot / (v1len * v2len);
+
+    return nur ? nur <= 0 : 0;
+}
+
 window.onload = function init() {
     canvas = document.getElementById('canvas');
     gl = canvas.getContext('webgl');
@@ -60,15 +90,33 @@ window.onload = function init() {
     
     
     const minUV = -10, maxUV = 10;
-    const step = (maxUV - minUV)/250;
+    const step = (maxUV - minUV)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
+
+    var p1, p2, prev1, prev2, n1, n2;
     
     for (let u = minUV; u < maxUV; u += step) {
-        for (let v = minUV; v < maxUV; v += step) {            
-            oneStrip.push(...[x(u, w)/8, y(u, v, w)/8, z(u, v, w)/8,
-            x(u+step, w)/8, y(u+step, v, w)/8, z(u+step, v, w)/8]);
-            colors.push(vertexColors[Math.floor(Math.random()*8)]);
-            colors.push(vertexColors[Math.floor(Math.random()*8)]);
+        p1 = [x(u, w)/5, y(u, minUV, w)/5, z(u, minUV, w)/5];
+        p2 = [x(u+step, w)/5, y(u+step, minUV, w)/5, z(u+step, minUV, w)/5];
+        oneStrip.push(...p1, ...p2);
+        prev1 = p1;
+        prev2 = p2;
+        for (let v = minUV+step; v < maxUV; v += step) {    
+            p1 = [x(u, w)/5, y(u, v, w)/5, z(u, v, w)/5];
+            p2 = [x(u+step, w)/5, y(u+step, v, w)/5, z(u+step, v, w)/5];
+            oneStrip.push(...p1, ...p2);
+
+            n1 = normal(...prev1, ...prev2, ...p1);
+            n2 = normal(...prev2, ...p1, ...p2);
+
+            const b1 = brightness(...n1, ...lightSource);
+            const b2 = brightness(...n2, ...lightSource);
+            
+            colors.push([b1, b1, b1, 1]);
+            colors.push([b2, b2, b2, 1]);
+
+            prev1 = p1;
+            prev2 = p2;
             
         }
         strips.push(...oneStrip);
