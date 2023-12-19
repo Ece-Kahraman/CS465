@@ -8,7 +8,7 @@
         attribute vec3 position;
         //uniform mat4 uModelViewMatrix;
         uniform mat4 projectionMatrix;
-        attribute  vec4 vColor;
+        attribute vec4 vColor;
         varying vec4 fColor;
 
 
@@ -16,7 +16,6 @@
         void main() {
             gl_Position = vec4(position, 1.0);
             fColor = vColor;
-
         }
     </script>
 
@@ -24,7 +23,6 @@
         precision mediump float;
         varying vec4 fColor;
         
-
         void main() {
             gl_FragColor = fColor;
         }

@@ -2,7 +2,7 @@ var canvas;
 var gl;
 var program;
 var strips = [];
-var oneStrip = [];
+var triangles = [];
 var normals = [];
 var colors = [];
 var vertexColors = [
@@ -17,7 +17,7 @@ var vertexColors = [
 ];
 var vBuffer;
 
-const lightSourcePos = [0, 0, 1];
+const lightSourcePos = [1, 1, 1];
 
 var left = -2.0;
 var right = 2.0;
@@ -31,8 +31,6 @@ var eye;
 
 const at = vec3(0.0, 0.0, 0.0);
 const up = vec3(0.0, 1.0, 0.0);
-
-var numUPoints = 50, numVPoints = 50;
 
 const aa = 0.8;
 
@@ -87,40 +85,32 @@ window.onload = function init() {
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
     gl.enable(gl.DEPTH_TEST);
 
-    
-    
     const minUV = -10, maxUV = 10;
     const step = (maxUV - minUV)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
-    var p1, p2, prev1, prev2, n1, n2, b1, b2;
+    var p00, p01, p10, p11, n1, n2, b1, b2;
+
+    const mag = 1/8;
     
     for (let u = minUV; u < maxUV; u += step) {
-        p1 = [x(u, w)/5, y(u, minUV, w)/5, z(u, minUV, w)/5];
-        p2 = [x(u+step, w)/5, y(u+step, minUV, w)/5, z(u+step, minUV, w)/5];
-        oneStrip.push(...p1, ...p2);
-        prev1 = p1;
-        prev2 = p2;
-        for (let v = minUV+step; v < maxUV; v += step) {    
-            p1 = [x(u, w)/5, y(u, v, w)/5, z(u, v, w)/5];
-            p2 = [x(u+step, w)/5, y(u+step, v, w)/5, z(u+step, v, w)/5];
-            oneStrip.push(...p1, ...p2);
+        for (let v = minUV; v < maxUV; v += step) {    
+            p00 = [x(u, w)*mag, y(u, v, w)*mag, z(u, v, w)*mag];
+            p01 = [x(u, w)*mag, y(u, v+step, w)*mag, z(u, v+step, w)*mag];
+            p10 = [x(u+step, w)*mag, y(u+step, v, w)*mag, z(u+step, v, w)*mag];
+            p11 = [x(u+step, w)*mag, y(u+step, v+step, w)*mag, z(u+step, v+step, w)*mag];
+            triangles.push( ...p00, ...p10, ...p01, ...p10, ...p01, ...p11 );
 
-            n1 = normal(...prev1, ...prev2, ...p1);
-            n2 = normal(...prev2, ...p1, ...p2);
+            n1 = normal(...p00, ...p10, ...p01);
+            n2 = normal(...p10, ...p01, ...p11);
 
             b1 = brightness(...n1, ...lightSourcePos);
             b2 = brightness(...n2, ...lightSourcePos);
-            
-            colors.push([b1, b1, b1, 1]);
-            colors.push([b2, b2, b2, 1]);
 
-            prev1 = p1;
-            prev2 = p2;
+            colors.push(b1, b1, b1, 1, b1, b1, b1, 1, b1, b1, b1, 1);
+            colors.push(b2, b2, b2, 1, b2, b2, b2, 1, b2, b2, b2, 1);
             
         }
-        strips.push(...oneStrip);
-        oneStrip = [];
     }
 
     program = initShaders(gl, "vertex-shader", "fragment-shader");
@@ -128,7 +118,7 @@ window.onload = function init() {
 
     vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(strips), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
     
     var vPosition = gl.getAttribLocation( program, "position" );
     gl.enableVertexAttribArray( vPosition );
@@ -160,7 +150,7 @@ var render = function(){
 
 // render columns of data then rows
         
-    for(let i=0; i<strips.length; i++) gl.drawArrays( gl.TRIANGLE_STRIP, i*606, 606 );            
+    gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );            
     //for(var i=0; i<numVPoints; i++) gl.drawArrays( gl.LINE_STRIP, i*numUPoints+positions.length/2, numUPoints );
     //gl.drawArrays(gl.TRIANGLES_STRIP, 0, positions.length / 3);
     //requestAnimFrame(render);
