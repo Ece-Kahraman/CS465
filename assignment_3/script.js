@@ -1,7 +1,6 @@
 var canvas;
 var gl;
 var program;
-var strips = [];
 var triangles = [];
 var normals = [];
 var colors = [];
@@ -15,7 +14,7 @@ var vertexColors = [
     [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
     [ 1.0, 1.0, 1.0, 1.0 ]   // white
 ];
-var vBuffer;
+var vBuffer, vPosition, cBuffer, vColor;
 
 const lightSourcePos = [1, 1, 1];
 
@@ -160,6 +159,8 @@ function generateBreather( maxU, maxV, aa, mag){
     const minU = -maxU;
     const minV = -maxV;
     triangles = [];
+    normals = [];
+    colors = [];
     const step = (maxU - minU)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
@@ -214,17 +215,17 @@ window.onload = function init() {
 
     vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.DYNAMIC_DRAW);
     
-    var vPosition = gl.getAttribLocation( program, "position" );
+    vPosition = gl.getAttribLocation( program, "position" );
     gl.enableVertexAttribArray( vPosition );
     gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
 
-    var cBuffer = gl.createBuffer();
+    cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.DYNAMIC_DRAW );
 
-    var vColor = gl.getAttribLocation( program, "vColor" );
+    vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
 
@@ -255,9 +256,8 @@ window.onload = function init() {
     } );
 
     canvas.addEventListener("wheel", function(event){
-        let d = -event.deltaY / 100;
+        let d = -event.deltaY / 1000;
         mag = Math.min(4, Math.max(.1, mag + d));
-        console.log(mag);
         wheelMove = true;
     } );
 
@@ -265,41 +265,34 @@ window.onload = function init() {
 }
 
 var render = function(){
-    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    console.log(wheelMove, trackballMove, renderFlag);
+    if (renderFlag || trackballMove || wheelMove) {
+        gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    if (renderFlag){
-        generateBreather(maxU, maxV, aa, mag);
-        renderFlag = false;
-        vBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+        if (renderFlag){
+            generateBreather(maxU, maxV, aa, mag);
+            renderFlag = false;
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.DYNAMIC_DRAW);
+            gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+            gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.DYNAMIC_DRAW );
+        }
         
-        var vPosition = gl.getAttribLocation( program, "position" );
-        gl.enableVertexAttribArray( vPosition );
-        gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
+        if(trackballMove) {
+            axis = normalize(axis);
+            rotationMatrix = mult(rotate(angle, axis), rotationMatrix);
+            gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
+        }
 
-        var cBuffer = gl.createBuffer();
-        gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
-        gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+        if ( wheelMove ) {
+            scaleMatrix = scale(mag, mag, mag);
+            gl.uniformMatrix4fv(scaleMatrixLoc, false, flatten(scaleMatrix));
+            wheelMove = false;
+        } 
 
-        var vColor = gl.getAttribLocation( program, "vColor" );
-        gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
-        gl.enableVertexAttribArray( vColor );
-    }
-    
-    if(trackballMove) {
-        axis = normalize(axis);
-        rotationMatrix = mult(rotate(angle, axis), rotationMatrix);
-        gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
-    }
-
-    if ( wheelMove ) {
-        scaleMatrix = scale(mag, mag, mag);
-        gl.uniformMatrix4fv(scaleMatrixLoc, false, flatten(scaleMatrix));
-        wheelMove = false;
-    } 
-
-        
-    gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );         
+            
+        gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );
+    }        
     requestAnimFrame(render);
 }
