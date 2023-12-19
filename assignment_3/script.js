@@ -62,16 +62,16 @@ function mouseMotion( x,  y)
       dz = curPos[2] - lastPos[2];
 
       if (dx || dy || dz) {
-	       angle = -0.1 * Math.sqrt(dx*dx + dy*dy + dz*dz);
+            angle = -0.1 * Math.sqrt(dx*dx + dy*dy + dz*dz);
 
 
-	       axis[0] = lastPos[1]*curPos[2] - lastPos[2]*curPos[1];
-	       axis[1] = lastPos[2]*curPos[0] - lastPos[0]*curPos[2];
-	       axis[2] = lastPos[0]*curPos[1] - lastPos[1]*curPos[0];
+            axis[0] = lastPos[1]*curPos[2] - lastPos[2]*curPos[1];
+            axis[1] = lastPos[2]*curPos[0] - lastPos[0]*curPos[2];
+            axis[2] = lastPos[0]*curPos[1] - lastPos[1]*curPos[0];
 
-         lastPos[0] = curPos[0];
-	       lastPos[1] = curPos[1];
-	       lastPos[2] = curPos[2];
+        lastPos[0] = curPos[0];
+	    lastPos[1] = curPos[1];
+	    lastPos[2] = curPos[2];
       }
     }
     render();
@@ -176,7 +176,7 @@ window.onload = function init() {
 
     var aa = 0.5;
 
-    document.getElementById("aa-slider").onChange = function(event) {
+    document.getElementById("aa-slider").onchange = (event) => {
         aa = event.target.value;
         console.log(event.target.value);
         // generateBreater(1, 1, aa, 1/8);
