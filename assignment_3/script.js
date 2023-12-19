@@ -107,16 +107,20 @@ window.onload = function init() {
     for (let u = minUV; u < maxUV; u += step) {
         if (inputs.length >= 18*detail*detail) break;
         for (let v = minUV; v < maxUV; v += step) {              
-            inputs.push(u, v, aa, u+step, v, aa, u, v+step, aa, u+step, v, aa, u, v+step, aa, u+step, v+step, aa);
+            inputs.push(u, v, aa, 0, u+step, v, aa, 1, u, v+step, aa, 2, u+step, v, aa, 0, u, v+step, aa, 1, u+step, v+step, aa, 2);
         }
     }
 
-    inputs.splice(18*detail*detail);
+    inputs.splice(24*detail*detail);
 
 
     var inputsBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, inputsBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(inputs), gl.STATIC_DRAW);
+
+    var vInputs = gl.getAttribLocation( program, "inputs" );
+    gl.vertexAttribPointer( vInputs, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vInputs );
 
     /*var cBuffer = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
@@ -144,7 +148,7 @@ var render = function(){
 
 // render columns of data then rows
         
-    gl.drawArrays( gl.TRIANGLES, 0, inputs.length/3 );            
+    gl.drawArrays( gl.TRIANGLES, 0, inputs.length/4 );            
     //for(var i=0; i<numVPoints; i++) gl.drawArrays( gl.LINE_STRIP, i*numUPoints+positions.length/2, numUPoints );
     //gl.drawArrays(gl.TRIANGLES_STRIP, 0, positions.length / 3);
     //requestAnimFrame(render);
