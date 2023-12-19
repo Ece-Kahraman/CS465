@@ -5,7 +5,7 @@ var triangles = [];
 var normals = [];
 var colors = [];
 var vertexColors = [
-    [ 0.0, 0.0, 0.0, 1.0 ],  // black
+    [ 1.0, 1.0, 1.0, 1.0 ],  // black
     [ 1.0, 0.0, 0.0, 1.0 ],  // red
     [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
     [ 0.0, 1.0, 0.0, 1.0 ],  // green
@@ -14,6 +14,8 @@ var vertexColors = [
     [ 0.0, 1.0, 1.0, 1.0 ],  // cyan
     [ 1.0, 1.0, 1.0, 1.0 ]   // white
 ];
+
+var color = 0;
 var vBuffer, vPosition, cBuffer, vColor;
 
 const lightSourcePos = [1, 1, 1];
@@ -164,7 +166,7 @@ function generateBreather( maxU, maxV, aa, mag){
     const step = (maxU - minU)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
-    var p00, p01, p10, p11, n1, n2, b1, b2;
+    var p00, p01, p10, p11, n1, n2, b1, b2, c1, c2, c3;
     for (let u = minU; u < maxU; u += step) {
         for (let v = minV; v < maxV; v += step) {
             p00 = [x(u, w, aa)*mag, y(u, v, w, aa)*mag, z(u, v, w, aa)*mag];
@@ -179,8 +181,13 @@ function generateBreather( maxU, maxV, aa, mag){
             b1 = brightness(...n1, ...lightSourcePos);
             b2 = brightness(...n2, ...lightSourcePos);
 
-            colors.push(b1, b1, b1, 1, b1, b1, b1, 1, b1, b1, b1, 1);
-            colors.push(b2, b2, b2, 1, b2, b2, b2, 1, b2, b2, b2, 1);
+            [c1, c2, c3] = vertexColors[color];
+
+            c1 = [b1 * c1, b1 * c2, b1 * c3, 1]
+            c2 = [b2 * c1, b2 * c2, b2 * c3, 1];
+
+            colors.push(...c1, ...c1, ...c1);
+            colors.push(...c2, ...c2, ...c2);
             
         }
     }
