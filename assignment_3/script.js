@@ -22,11 +22,17 @@ const lightSourcePos = [1, 1, 1];
 var rotationMatrix;
 var rotationMatrixLoc;
 
+var scaleMatrix;
+var scaleMatrixLoc;
+
+var mag = 0.12;
+
 var angle = 0.0;
 var axis = [0, 0, 1];
 
 var trackingMouse = false;
 var trackballMove = false;
+var wheelMove = false;
 
 var lastPos = [0, 0, 0];
 var curx, cury;
@@ -184,8 +190,6 @@ window.onload = function init() {
         // gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
         // render();
     }
-
-    var mag = 1/8;
     
     generateBreater(1, 1, aa, mag);    
 
@@ -215,6 +219,10 @@ window.onload = function init() {
     rotationMatrix = mat4();
     rotationMatrixLoc = gl.getUniformLocation(program, "rotationMatrix");
     gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
+
+    scaleMatrix = mat4();
+    scaleMatrixLoc = gl.getUniformLocation(program, "scaleMatrix")
+    gl.uniformMatrix4fv(scaleMatrixLoc, false, flatten(scaleMatrix));
     
     canvas.addEventListener("mousedown", function(event){
         var x = 2*event.clientX/canvas.width-1;
@@ -236,8 +244,10 @@ window.onload = function init() {
     } );
 
     canvas.addEventListener("wheel", function(event){
-        mag += event.deltaY * -0.01;
-        console.log(1/mag);
+        let d = -event.deltaY / 100;
+        mag = Math.min(4, Math.max(.1, mag + d));
+        console.log(mag);
+        wheelMove = true;
     } );
 
     render();
@@ -251,6 +261,12 @@ var render = function(){
         rotationMatrix = mult(rotate(angle, axis), rotationMatrix);
         gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
     }
+
+    if ( wheelMove ) {
+        scaleMatrix = scale(mag, mag, mag);
+        gl.uniformMatrix4fv(scaleMatrixLoc, false, flatten(scaleMatrix));
+        wheelMove = false;
+    } 
 
         
     gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );            
