@@ -32,8 +32,6 @@ var lastPos = [0, 0, 0];
 var curx, cury;
 var startX, startY;
 
-const aa = 0.8;
-
 function trackballView( x,  y ) {
     var d, a;
     var v = [];
@@ -102,18 +100,18 @@ function stopMotion( x,  y)
     }
 }
 
-function x(u, w) {
+function x(u, w, aa) {
     var denom = aa * (Math.pow(w*Math.cosh(aa*u), 2) + Math.pow(aa*Math.sin(w*u), 2));
     return -1*u + (2*(1 - Math.pow(aa, 2))*Math.cosh(aa*u)*Math.sin(aa*u)) / denom;
     
 }
 
-function y(u, v, w) {
+function y(u, v, w, aa) {
     var denom = aa * (Math.pow(w*Math.cosh(aa*u), 2) + Math.pow(aa*Math.sin(w*u), 2));
     return (2*w*Math.cosh(aa*u)*(-1*w*Math.cos(v)*Math.cos(w*v)-Math.sin(v)*Math.sin(w*v)))/denom;
 }
 
-function z(u, v, w) {
+function z(u, v, w, aa) {
     var denom = aa * (Math.pow(w*Math.cosh(aa*u), 2) + Math.pow(aa*Math.sin(w*u), 2));
     return (2*w*Math.cosh(aa*u)*(-1*w*Math.sin(v)*Math.cos(w*v)+Math.cos(v)*Math.sin(w*v)))/denom;
 }
@@ -145,26 +143,18 @@ function brightness(v1x, v1y, v1z, v2x, v2y, v2z) {
     return Math.abs(nur);
 }
 
-window.onload = function init() {
-    canvas = document.getElementById('canvas');
-    gl = canvas.getContext('webgl');
-
-    
-
+function generateBreater(u, v, aa, mag){
     const minUV = -10, maxUV = 10;
     const step = (maxUV - minUV)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
     var p00, p01, p10, p11, n1, n2, b1, b2;
-
-    const mag = 1/8;
-    
     for (let u = minUV; u < maxUV; u += step) {
-        for (let v = minUV; v < maxUV; v += step) {    
-            p00 = [x(u, w)*mag, y(u, v, w)*mag, z(u, v, w)*mag];
-            p01 = [x(u, w)*mag, y(u, v+step, w)*mag, z(u, v+step, w)*mag];
-            p10 = [x(u+step, w)*mag, y(u+step, v, w)*mag, z(u+step, v, w)*mag];
-            p11 = [x(u+step, w)*mag, y(u+step, v+step, w)*mag, z(u+step, v+step, w)*mag];
+        for (let v = minUV; v < maxUV; v += step) {
+            p00 = [x(u, w, aa)*mag, y(u, v, w, aa)*mag, z(u, v, w, aa)*mag];
+            p01 = [x(u, w, aa)*mag, y(u, v+step, w, aa)*mag, z(u, v+step, w, aa)*mag];
+            p10 = [x(u+step, w, aa)*mag, y(u+step, v, w, aa)*mag, z(u+step, v, w, aa)*mag];
+            p11 = [x(u+step, w, aa)*mag, y(u+step, v+step, w, aa)*mag, z(u+step, v+step, w, aa)*mag];
             triangles.push( ...p00, ...p10, ...p01, ...p10, ...p01, ...p11 );
 
             n1 = normal(...p00, ...p10, ...p01);
@@ -178,6 +168,26 @@ window.onload = function init() {
             
         }
     }
+}
+
+window.onload = function init() {
+    canvas = document.getElementById('canvas');
+    gl = canvas.getContext('webgl');
+
+    var aa = 0.5;
+
+    document.getElementById("aa-slider").onChange = function(event) {
+        aa = event.target.value;
+        console.log(event.target.value);
+        // generateBreater(1, 1, aa, 1/8);
+        // gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+        // gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+        // render();
+    }
+
+    var mag = 1/8;
+    
+    generateBreater(1, 1, aa, mag);    
 
     gl.viewport( 0, 0, canvas.width, canvas.height );    
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
@@ -225,6 +235,11 @@ window.onload = function init() {
         mouseMotion(x, y);
     } );
 
+    canvas.addEventListener("wheel", function(event){
+        mag += event.deltaY * -0.01;
+        console.log(1/mag);
+    } );
+
     render();
 }
 
@@ -234,7 +249,6 @@ var render = function(){
     if(trackballMove) {
         axis = normalize(axis);
         rotationMatrix = mult(rotate(angle, axis), rotationMatrix);
-        console.table(rotationMatrix);
         gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
     }
 
