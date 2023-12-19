@@ -38,6 +38,13 @@ var lastPos = [0, 0, 0];
 var curx, cury;
 var startX, startY;
 
+var renderFlag = true;
+
+var aa = 0.8;
+var mag = 1/8;
+var maxU = 10;
+var maxV = 10;
+
 function trackballView( x,  y ) {
     var d, a;
     var v = [];
@@ -149,14 +156,16 @@ function brightness(v1x, v1y, v1z, v2x, v2y, v2z) {
     return Math.abs(nur);
 }
 
-function generateBreater(u, v, aa, mag){
-    const minUV = -10, maxUV = 10;
-    const step = (maxUV - minUV)/150;
+function generateBreather( maxU, maxV, aa, mag){
+    const minU = -maxU;
+    const minV = -maxV;
+    triangles = [];
+    const step = (maxU - minU)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
     var p00, p01, p10, p11, n1, n2, b1, b2;
-    for (let u = minUV; u < maxUV; u += step) {
-        for (let v = minUV; v < maxUV; v += step) {
+    for (let u = minU; u < maxU; u += step) {
+        for (let v = minV; v < maxV; v += step) {
             p00 = [x(u, w, aa)*mag, y(u, v, w, aa)*mag, z(u, v, w, aa)*mag];
             p01 = [x(u, w, aa)*mag, y(u, v+step, w, aa)*mag, z(u, v+step, w, aa)*mag];
             p10 = [x(u+step, w, aa)*mag, y(u+step, v, w, aa)*mag, z(u+step, v, w, aa)*mag];
@@ -180,18 +189,21 @@ window.onload = function init() {
     canvas = document.getElementById('canvas');
     gl = canvas.getContext('webgl');
 
-    var aa = 0.5;
 
     document.getElementById("aa-slider").onchange = (event) => {
-        aa = event.target.value;
-        console.log(event.target.value);
-        // generateBreater(1, 1, aa, 1/8);
-        // gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-        // gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
-        // render();
+        aa = event.target.value;       
+        renderFlag = true;   
     }
-    
-    generateBreater(1, 1, aa, mag);    
+
+    document.getElementById("u-slider").onchange = (event) => {
+        maxU = event.target.value;       
+        renderFlag = true;   
+    }
+
+    document.getElementById("v-slider").onchange = (event) => {
+        maxV = event.target.value;       
+        renderFlag = true;   
+    }
 
     gl.viewport( 0, 0, canvas.width, canvas.height );    
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
@@ -236,8 +248,7 @@ window.onload = function init() {
         stopMotion(x, y);
     });
   
-    canvas.addEventListener("mousemove", function(event){
-  
+    canvas.addEventListener("mousemove", function(event){  
         var x = 2*event.clientX/canvas.width-1;
         var y = 2*(canvas.height-event.clientY)/canvas.height-1;
         mouseMotion(x, y);
@@ -255,6 +266,26 @@ window.onload = function init() {
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    if (renderFlag){
+        generateBreather(maxU, maxV, aa, mag);
+        renderFlag = false;
+        vBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+        
+        var vPosition = gl.getAttribLocation( program, "position" );
+        gl.enableVertexAttribArray( vPosition );
+        gl.vertexAttribPointer( vPosition, 3, gl.FLOAT, false, 0, 0 );
+
+        var cBuffer = gl.createBuffer();
+        gl.bindBuffer( gl.ARRAY_BUFFER, cBuffer );
+        gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+
+        var vColor = gl.getAttribLocation( program, "vColor" );
+        gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
+        gl.enableVertexAttribArray( vColor );
+    }
     
     if(trackballMove) {
         axis = normalize(axis);
@@ -269,9 +300,6 @@ var render = function(){
     } 
 
         
-    gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );            
-    //for(var i=0; i<numVPoints; i++) gl.drawArrays( gl.LINE_STRIP, i*numUPoints+positions.length/2, numUPoints );
-    //gl.drawArrays(gl.TRIANGLES_STRIP, 0, positions.length / 3);
-    //requestAnimFrame(render);          
+    gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );         
     requestAnimFrame(render);
 }
