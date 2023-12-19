@@ -166,7 +166,7 @@ function generateBreather( maxU, maxV, aa, mag){
     const step = (maxU - minU)/150;
     let w = Math.sqrt(1 - Math.pow(aa, 2));
 
-    var p00, p01, p10, p11, n1, n2, b1, b2, c1, c2, c3;
+    var p00, p01, p10, p11, n1, n2, b1, b2, c1, c2, c3, c4, tri1Color, tri2Color;
     for (let u = minU; u < maxU; u += step) {
         for (let v = minV; v < maxV; v += step) {
             p00 = [x(u, w, aa)*mag, y(u, v, w, aa)*mag, z(u, v, w, aa)*mag];
@@ -181,13 +181,13 @@ function generateBreather( maxU, maxV, aa, mag){
             b1 = brightness(...n1, ...lightSourcePos);
             b2 = brightness(...n2, ...lightSourcePos);
 
-            [c1, c2, c3] = vertexColors[color];
+            [c1, c2, c3, c4] = vertexColors[color];
 
-            c1 = [b1 * c1, b1 * c2, b1 * c3, 1]
-            c2 = [b2 * c1, b2 * c2, b2 * c3, 1];
+            tri1Color = [b1 * c1, b1 * c2, b1 * c3, c4]
+            tri2Color = [b2 * c1, b2 * c2, b2 * c3, c4];
 
-            colors.push(...c1, ...c1, ...c1);
-            colors.push(...c2, ...c2, ...c2);
+            colors.push(...tri1Color, ...tri1Color, ...tri1Color);
+            colors.push(...tri2Color, ...tri2Color, ...tri2Color);
             
         }
     }
@@ -212,6 +212,35 @@ window.onload = function init() {
         maxV = event.target.value;       
         renderFlag = true;   
     }
+
+    document.getElementById("color_select").addEventListener("change", function(e) {
+        color = parseInt(e.target.value);
+        console.log(color);
+        renderFlag = true;
+    });
+
+    function handleNumberChange(event) {
+        // Get the input value
+        var inputValue = event.target.value;
+
+        // Perform any actions you want with the input value
+        console.log("Input value:", inputValue);
+    }
+
+    // Add event listeners to the input elements for the change event
+    document.getElementById("number1").addEventListener("change", (e) => {
+        lightSourcePos[0] = e.target.value;
+        renderFlag = true;
+    });
+    document.getElementById("number2").addEventListener("change", (e) => {
+        lightSourcePos[1] = e.target.value;
+        renderFlag = true;
+    });
+    document.getElementById("number3").addEventListener("change", (e) => {
+        lightSourcePos[2] = e.target.value;
+        renderFlag = true;
+    });
+
 
     gl.viewport( 0, 0, canvas.width, canvas.height );    
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
@@ -272,7 +301,6 @@ window.onload = function init() {
 }
 
 var render = function(){
-    console.log(wheelMove, trackballMove, renderFlag);
     if (renderFlag || trackballMove || wheelMove) {
         gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
