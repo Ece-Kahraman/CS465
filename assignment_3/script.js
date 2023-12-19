@@ -19,20 +19,88 @@ var vBuffer;
 
 const lightSourcePos = [1, 1, 1];
 
-var left = -2.0;
-var right = 2.0;
-var ytop = 2.0;
-var bottom = -2.0;
-var radius = 1.0;
+var rotationMatrix;
+var rotationMatrixLoc;
 
-var modelViewMatrix, projectionMatrix;
-var modelViewMatrixLoc, projectionMatrixLoc;
-var eye;
+var angle = 0.0;
+var axis = [0, 0, 1];
 
-const at = vec3(0.0, 0.0, 0.0);
-const up = vec3(0.0, 1.0, 0.0);
+var trackingMouse = false;
+var trackballMove = false;
+
+var lastPos = [0, 0, 0];
+var curx, cury;
+var startX, startY;
 
 const aa = 0.8;
+
+function trackballView( x,  y ) {
+    var d, a;
+    var v = [];
+
+    v[0] = x;
+    v[1] = y;
+
+    d = v[0]*v[0] + v[1]*v[1];
+    if (d < 1.0)
+      v[2] = Math.sqrt(1.0 - d);
+    else {
+      v[2] = 0.0;
+      a = 1.0 /  Math.sqrt(d);
+      v[0] *= a;
+      v[1] *= a;
+    }
+    return v;
+}
+
+function mouseMotion( x,  y)
+{
+    var dx, dy, dz;
+
+    var curPos = trackballView(x, y);
+    if(trackingMouse) {
+      dx = curPos[0] - lastPos[0];
+      dy = curPos[1] - lastPos[1];
+      dz = curPos[2] - lastPos[2];
+
+      if (dx || dy || dz) {
+	       angle = -0.1 * Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+
+	       axis[0] = lastPos[1]*curPos[2] - lastPos[2]*curPos[1];
+	       axis[1] = lastPos[2]*curPos[0] - lastPos[0]*curPos[2];
+	       axis[2] = lastPos[0]*curPos[1] - lastPos[1]*curPos[0];
+
+         lastPos[0] = curPos[0];
+	       lastPos[1] = curPos[1];
+	       lastPos[2] = curPos[2];
+      }
+    }
+    render();
+}
+
+function startMotion( x,  y)
+{
+    trackingMouse = true;
+    startX = x;
+    startY = y;
+    curx = x;
+    cury = y;
+
+    lastPos = trackballView(x, y);
+	  trackballMove=true;
+}
+
+function stopMotion( x,  y)
+{
+    trackingMouse = false;
+    if (startX != x || startY != y) {
+    }
+    else {
+	     angle = 0.0;
+	     trackballMove = false;
+    }
+}
 
 function x(u, w) {
     var denom = aa * (Math.pow(w*Math.cosh(aa*u), 2) + Math.pow(aa*Math.sin(w*u), 2));
@@ -81,9 +149,7 @@ window.onload = function init() {
     canvas = document.getElementById('canvas');
     gl = canvas.getContext('webgl');
 
-    gl.viewport( 0, 0, canvas.width, canvas.height );    
-    gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
-    gl.enable(gl.DEPTH_TEST);
+    
 
     const minUV = -10, maxUV = 10;
     const step = (maxUV - minUV)/150;
@@ -113,12 +179,20 @@ window.onload = function init() {
         }
     }
 
+    gl.viewport( 0, 0, canvas.width, canvas.height );    
+    gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
+    gl.enable(gl.DEPTH_TEST);
+
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
 
     vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+<<<<<<< Updated upstream
     gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
+=======
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(strips), gl.DYNAMIC_DRAW);
+>>>>>>> Stashed changes
     
     var vPosition = gl.getAttribLocation( program, "position" );
     gl.enableVertexAttribArray( vPosition );
@@ -131,27 +205,51 @@ window.onload = function init() {
     var vColor = gl.getAttribLocation( program, "vColor" );
     gl.vertexAttribPointer( vColor, 4, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vColor );
-    
 
+    rotationMatrix = mat4();
+    rotationMatrixLoc = gl.getUniformLocation(program, "rotationMatrix");
+    gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
+    
+    canvas.addEventListener("mousedown", function(event){
+        var x = 2*event.clientX/canvas.width-1;
+        var y = 2*(canvas.height-event.clientY)/canvas.height-1;
+        startMotion(x, y);
+    });
+  
+    canvas.addEventListener("mouseup", function(event){
+        var x = 2*event.clientX/canvas.width-1;
+        var y = 2*(canvas.height-event.clientY)/canvas.height-1;
+        stopMotion(x, y);
+    });
+  
+    canvas.addEventListener("mousemove", function(event){
+  
+        var x = 2*event.clientX/canvas.width-1;
+        var y = 2*(canvas.height-event.clientY)/canvas.height-1;
+        mouseMotion(x, y);
+    } );
 
     render();
 }
 
 var render = function(){
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            
-    //eye = vec3(radius*Math.sin(theta)*Math.cos(phi), radius*Math.sin(theta)*Math.sin(phi), radius*Math.cos(theta));
+    
+    if(trackballMove) {
+        axis = normalize(axis);
+        rotationMatrix = mult(rotate(angle, axis), rotationMatrix);
+        console.table(rotationMatrix);
+        gl.uniformMatrix4fv(rotationMatrixLoc, false, flatten(rotationMatrix));
+    }
 
-    //modelViewMatrix = lookAt(eye, at , up);
-    projectionMatrix = mat4(); //ortho(left, right, bottom, ytop, near, far);
-            
-    //gl.uniformMatrix4fv( modelViewMatrixLoc, false, flatten(modelViewMatrix) );
-    gl.uniformMatrix4fv( projectionMatrixLoc, false, flatten(projectionMatrix) );
-
-// render columns of data then rows
         
+<<<<<<< Updated upstream
     gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );            
     //for(var i=0; i<numVPoints; i++) gl.drawArrays( gl.LINE_STRIP, i*numUPoints+positions.length/2, numUPoints );
     //gl.drawArrays(gl.TRIANGLES_STRIP, 0, positions.length / 3);
     //requestAnimFrame(render);
+=======
+    for(let i=0; i<strips.length; i++) gl.drawArrays( gl.TRIANGLE_STRIP, i*900, 900);            
+    requestAnimFrame(render);
+>>>>>>> Stashed changes
 }
