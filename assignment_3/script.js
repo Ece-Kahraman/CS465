@@ -188,11 +188,7 @@ window.onload = function init() {
 
     vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-<<<<<<< Updated upstream
     gl.bufferData(gl.ARRAY_BUFFER, flatten(triangles), gl.STATIC_DRAW);
-=======
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(strips), gl.DYNAMIC_DRAW);
->>>>>>> Stashed changes
     
     var vPosition = gl.getAttribLocation( program, "position" );
     gl.enableVertexAttribArray( vPosition );
@@ -243,13 +239,9 @@ var render = function(){
     }
 
         
-<<<<<<< Updated upstream
     gl.drawArrays( gl.TRIANGLES, 0, triangles.length/3 );            
     //for(var i=0; i<numVPoints; i++) gl.drawArrays( gl.LINE_STRIP, i*numUPoints+positions.length/2, numUPoints );
     //gl.drawArrays(gl.TRIANGLES_STRIP, 0, positions.length / 3);
-    //requestAnimFrame(render);
-=======
-    for(let i=0; i<strips.length; i++) gl.drawArrays( gl.TRIANGLE_STRIP, i*900, 900);            
+    //requestAnimFrame(render);          
     requestAnimFrame(render);
->>>>>>> Stashed changes
 }
