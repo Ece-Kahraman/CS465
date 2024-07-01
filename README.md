@@ -2,8 +2,8 @@
 ## Bilkent University CS465 Computer Graphics I Assignments
 
 Completed by:
-  Burak Öztürk (@burakozturk01)
-  Ece Kahraman
+- [Burak Öztürk](https://github.com/burakozturk01)
+- [Ece Kahraman](https://github.com/Ece-Kahraman)
 
 ## Assignment 1
   2D Paint Application with Triangles: 90/100
